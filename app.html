@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinguaLift | Linguistics Training Arena</title>
+  <meta
+    name="description"
+    content="Train on linguistics olympiad-style problems with OzCLO-inspired practice, adapted past-paper questions, review queues, and leaderboards."
+  >
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+    rel="stylesheet"
+  >
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      
+  <div class="sidebar-peek" aria-hidden="true"></div>
+    <div class="sidebar-icons">
+  <button class="icon-button" onclick="window.location.href='index.html'">🏠</button>
+  <button class="icon-button" onclick="scrollToSection('reviewCard')">📚</button>
+  <button class="icon-button" onclick="scrollToSection('leaderboardsCard')">🏆</button>
+  <button class="icon-button" onclick="scrollToSection('sprintPrompt')">⌛</button>
+</div>
+
+  <div class="sidebar-inner">
+    <div class="brand-block">
+      <p class="eyebrow">Linguistics Training</p>
+      <h1>LinguaLift.</h1>
+      <p class="sidebar-copy">Practice past questions from OzCLO, NACLO, and the IOL (UKLO later!).</p>
+    </div>
+
+    <nav class="sidebar-nav">
+      <button class="nav-link active" data-nav-target="practice" type="button">Practice</button>
+      <button class="nav-link" data-nav-target="reviewCard" type="button">Review</button>
+      <button class="nav-link" data-nav-target="leaderboardsCard" type="button">Leaderboards</button>
+    </nav>
+    <div class="sidebar-inner">
+  <div class="brand-block">
+    <p class="eyebrow">Linguistics Training</p>
+    <h1>LinguaLift.</h1>
+    <p class="sidebar-copy">Practice past questions from OzCLO, NACLO, and the IOL (UKLO later!).</p>
+  </div>
+
+  <nav class="sidebar-nav">
+    <button class="nav-link active" data-nav-target="practice" type="button">Practice</button>
+    <button class="nav-link" data-nav-target="reviewCard" type="button">Review</button>
+    <button class="nav-link" data-nav-target="leaderboardsCard" type="button">Leaderboards</button>
+  </nav>
+
+  <section class="sidebar-panel" id="authCard">
+    <div class="panel-head">
+      <div>
+        <p class="eyebrow">Account</p>
+        <h2>Sign in</h2>
+      </div>
+    </div>
+
+    <div class="auth-grid">
+      <input id="emailInput" type="email" placeholder="Email" />
+      <input id="passwordInput" type="password" placeholder="Password" />
+      <div class="button-row compact">
+        <button class="primary-button" id="signUpBtn" type="button">Sign up</button>
+        <button class="ghost-button" id="signInBtn" type="button">Log in</button>
+        <button class="ghost-button" id="signOutBtn" type="button">Log out</button>
+      </div>
+      <div class="feedback-card muted" id="authStatus">Not signed in.</div>
+    </div>
+  </section>
+
+  <section class="sidebar-panel">
+    <div class="panel-head">
+      <div>
+        <p class="eyebrow">Session stats</p>
+        <h2>Progress</h2>
+      </div>
+    </div>
+    <div class="stats-grid">
+      <article>
+        <span id="statSolved">0</span>
+        <p>Solved</p>
+      </article>
+      <article>
+        <span id="statAccuracy">0%</span>
+        <p>Accuracy</p>
+      </article>
+      <article>
+        <span id="statReview">0</span>
+        <p>Review queue</p>
+      </article>
+      <article>
+        <span id="statBest">0</span>
+        <p>Best sprint</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="sidebar-panel">
+    <div class="panel-head">
+      <div>
+        <p class="eyebrow">Recent tasks</p>
+        <h2>History</h2>
+      </div>
+      <span id="historyCount" class="panel-meta">0 items</span>
+    </div>
+    <div id="historyList" class="history-list"></div>
+  </section>
+</div>
+    <section class="sidebar-panel">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">Session stats</p>
+          <h2>Progress</h2>
+        </div>
+      </div>
+      <div class="stats-grid">
+        <article>
+          <span id="statSolved">0</span>
+          <p>Solved</p>
+        </article>
+        <article>
+          <span id="statAccuracy">0%</span>
+          <p>Accuracy</p>
+        </article>
+        <article>
+          <span id="statReview">0</span>
+          <p>Review queue</p>
+        </article>
+        <article>
+          <span id="statBest">0</span>
+          <p>Best sprint</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="sidebar-panel">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">Recent tasks</p>
+          <h2>History</h2>
+        </div>
+        <span id="historyCount" class="panel-meta">0 items</span>
+      </div>
+      <div id="historyList" class="history-list"></div>
+    </section>
+  </div>
+</aside>
+    <main class="main-shell" id="practice">
+      
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">OzCLO training platform</p>
+          <h2>Good evening.</h2>
+          <p class="topbar-copy">Lock in on linguistics, on one wbesite</p>
+        </div>
+        <button class="ghost-button" id="nextProblemButton" type="button">Generate problem</button>
+      </header>
+
+      
+
+      <section class="filter-bar">
+        <label>
+          Contest
+          <select id="contestFilter"></select>
+        </label>
+        <label>
+          Topic
+          <select id="topicFilter"></select>
+        </label>
+        <label>
+          Difficulty
+          <select id="difficultyFilter"></select>
+        </label>
+        <label>
+          Type
+          <select id="entryTypeFilter">
+            <option value="All problems">All problems</option>
+            <option value="original">Original drills</option>
+            <option value="adapted">Past-paper adaptations</option>
+          </select>
+        </label>
+        <label>
+          Sort
+          <select id="sortFilter">
+            <option value="recommended">Recommended</option>
+            <option value="difficulty">Difficulty</option>
+            <option value="latest">Latest</option>
+            <option value="title">Title</option>
+          </select>
+        </label>
+      </section>
+
+      <div class="chip-row" id="activeFilterChips"></div>
+
+      <section class="content-grid">
+  <aside class="bank-card">
+    <div class="panel-head">
+      <div>
+        <p class="eyebrow">Problem bank</p>
+        <h2 id="problemCount">0 problems</h2>
+      </div>
+      <span class="panel-meta"></span>
+    </div>
+    <div id="problemList" class="problem-list"></div>
+  </aside>
+
+  <section class="workspace-card">
+    <div class="problem-header">
+      <div>
+        <p class="eyebrow" id="problemMeta">Select a problem</p>
+        <h3 id="problemTitle">Your active workspace will appear here.</h3>
+      </div>
+      <div class="problem-header-actions">
+        <span class="badge" id="problemDifficulty">-</span>
+        <span class="badge" id="problemScore">Score: -</span>
+        <button class="star-button" id="bookmarkButton" type="button" aria-label="Bookmark problem">☆</button>
+      </div>
+    </div>
+
+    <p class="problem-copy" id="problemPrompt">
+      Choose any item from the bank to start solving. Adapted past-paper questions stay interactive here, with answer checking, hints, and worked solutions.
+    </p>
+
+    <div class="source-strip hidden" id="sourceStrip">
+      <span class="source-label" id="sourceLabel"></span>
+      <a id="sourceLink" href="#" target="_blank" rel="noreferrer">Official source</a>
+    </div>
+
+    <div id="problemDataset" class="dataset"></div>
+
+    <div class="matching-panel hidden" id="matchingPanel">
+      <div class="matching-columns">
+        <section class="match-card">
+          <h4>Prompt Set</h4>
+          <div id="matchingPrompts" class="match-list"></div>
+        </section>
+        <section class="match-card">
+          <h4>Options</h4>
+          <div id="matchingOptions" class="match-list"></div>
+        </section>
+      </div>
+      <div class="match-grid-wrap">
+        <p class="problem-copy">Choose one letter for each numbered item.</p>
+        <div id="matchingGrid" class="matching-grid"></div>
+      </div>
+    </div>
+    
+    <div class="translation-table-panel hidden" id="translationTablePanel">
+      <div id="translationTableWrap"></div>
+    </div>
+
+    <label class="answer-block" id="textAnswerBlock" for="answerInput">
+      Your answer
+      <textarea id="answerInput" placeholder="Explain your reasoning or enter the requested answer..."></textarea>
+    </label>
+
+    <div class="button-row">
+      <button class="primary-button" id="checkAnswerButton" type="button">Check answer</button>
+      <button class="ghost-button" id="showHintButton" type="button">Show hint</button>
+      <button class="ghost-button" id="showSolutionButton" type="button">Show solution</button>
+    </div>
+
+    <div class="feedback-stack">
+      <div class="feedback-card muted" id="hintCard">Hints appear here.</div>
+      <div class="feedback-card muted" id="resultCard">Checking feedback appears here.</div>
+      <div class="feedback-card muted" id="solutionCard">Worked solutions appear here.</div>
+    </div>
+  </section>
+
+  <aside class="side-tools">
+    <article class="utility-card side-tool-card" id="reviewCard">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">Review queue</p>
+          <h2 id="reviewTitle">Nothing queued yet</h2>
+        </div>
+        <span class="badge warm" id="reviewCount">0 queued</span>
+      </div>
+      <p class="problem-copy" id="reviewPrompt">Miss a problem or bookmark one to keep it here.</p>
+      <div class="button-row compact">
+        <button class="primary-button" id="reviewProblemButton" type="button">Open review item</button>
+        <button class="ghost-button" id="clearReviewButton" type="button">Clear queue</button>
+      </div>
+    </article>
+
+    <article class="utility-card side-tool-card">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">Sprint room</p>
+          <h2>Sprint</h2>
+        </div>
+      </div>
+      <div class="sprint-stats">
+        <div>
+          <p class="eyebrow">Time</p>
+          <strong id="sprintTimer">03:00</strong>
+        </div>
+        <div>
+          <p class="eyebrow">Score</p>
+          <strong id="sprintScore">0</strong>
+        </div>
+        <div>
+          <p class="eyebrow">Round</p>
+          <strong id="sprintRound">0 / 5</strong>
+        </div>
+      </div>
+      <p class="problem-copy" id="sprintPrompt">Run a five-question timed set built from the current interactive bank.</p>
+      <textarea id="sprintAnswer" placeholder="Type sprint answer here..."></textarea>
+
+      <div class="button-row compact">
+        <button class="primary-button" id="startSprintButton" type="button">Start sprint</button>
+        <button class="ghost-button" id="submitSprintButton" type="button">Submit answer</button>
+      </div>
+      <div class="feedback-card muted" id="sprintFeedback">Sprint feedback appears here.</div>
+    </article>
+
+    <article class="utility-card side-tool-card" id="leaderboardsCard">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">Leaderboards</p>
+          <h2>Competition board</h2>
+        </div>
+      </div>
+      <div class="leaderboard-tabs">
+        <button class="tab-button active" data-board="overall" type="button">Overall</button>
+        <button class="tab-button" data-board="sprint" type="button">Sprint</button>
+      </div>
+      <div id="leaderboardList" class="leaderboard-list"></div>
+    </article>
+  </aside>
+</section>
+    </main>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
+
+
+

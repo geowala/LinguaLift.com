@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LinguaLift</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: #000;
+      color: #fff;
+      font-family: "Times New Roman", Times, serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+      position: relative;
+    }
+
+    .hero-content {
+      max-width: 900px;
+      transition: transform 0.8s ease, opacity 0.8s ease, filter 0.8s ease;
+    }
+
+    .title-wrap {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 7rem;
+      margin-bottom: 1rem;
+    }
+
+    .typed-title {
+      font-size: clamp(3rem, 10vw, 7rem);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+      line-height: 1; /* important for cursor scaling */
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 0.08em;
+      height: 1em;
+      background: currentColor;
+      margin-left: 0.1em;
+      vertical-align: middle;
+      transform: translateY(-0.05em);
+      animation: blink 0.9s steps(1) infinite;
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      50.01%, 100% { opacity: 0; }
+    }
+
+    .hero-content p {
+      font-size: 1.1rem;
+      color: #cfcfcf;
+      margin-bottom: 2rem;
+      opacity: 0;
+      transform: translateY(10px);
+      animation: fadeUp 0.8s ease forwards;
+      animation-delay: 1.6s;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      opacity: 0;
+      transform: translateY(14px);
+      animation: fadeUp 0.8s ease forwards;
+      animation-delay: 1.9s;
+    }
+
+    @keyframes fadeUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .button {
+      display: inline-block;
+      padding: 0.95rem 1.6rem;
+      border: 1px solid rgba(255,255,255,0.9);
+      color: #fff;
+      text-decoration: none;
+      background: transparent;
+      transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
+      border-radius: 999px;
+      font-size: 0.98rem;
+      letter-spacing: 0.02em;
+    }
+
+    .button:hover {
+      background: #fff;
+      color: #000;
+      transform: translateY(-2px);
+    }
+
+    .about {
+      min-height: 100vh;
+      padding: 6rem 1.5rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .about-box {
+      max-width: 760px;
+      width: 100%;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 24px;
+      padding: 2rem;
+      background: rgba(255,255,255,0.03);
+      backdrop-filter: blur(4px);
+    }
+
+    .about-box h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      font-weight: 500;
+    }
+
+    .about-box p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: #ddd;
+      margin-bottom: 1rem;
+    }
+
+    .footer-note {
+      color: #888;
+      font-size: 0.95rem;
+      margin-top: 1rem;
+    }
+
+    .transition-overlay {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.85s ease;
+    }
+
+    .transition-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .hero-content.exit {
+      transform: scale(0.94) translateY(-18px);
+      opacity: 0;
+      filter: blur(8px);
+    }
+  </style>
+</head>
+<body>
+  <section class="hero">
+    <div class="hero-content">
+      <div class="title-wrap">
+        <h1 class="typed-title" id="typedTitle"></h1>
+        <span class="cursor" id="cursor"></span>
+      </div>
+      <p>Linguistics training, practice, and competition.</p>
+
+      <div class="button-group">
+        <a href="#" class="button" id="enterButton">Enter Main Site</a>
+        <a href="#about" class="button">About</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="about" id="about">
+    <div class="about-box">
+      <h2>About</h2>
+      <p>
+        Hiya!
+      </p>
+      <p>
+        I love linguistics
+      </p>
+      <p class="footer-note">
+        Kevin S
+      </p>
+    </div>
+  </section>
+
+  <div class="transition-overlay" id="overlay"></div>
+
+  <script>
+    const title = "LinguaLift";
+    const typedTitle = document.getElementById("typedTitle");
+    const cursor = document.getElementById("cursor");
+    const enterButton = document.getElementById("enterButton");
+    const overlay = document.getElementById("overlay");
+    const heroContent = document.querySelector(".hero-content");
+
+    let index = 0;
+    let isDeleting = false;
+
+    function loopTyping() {
+      if (!isDeleting) {
+        // typing forward
+        if (index < title.length) {
+          typedTitle.textContent += title.charAt(index);
+          index++;
+          setTimeout(loopTyping, 120);
+        } else {
+          // pause before deleting
+          setTimeout(() => {
+            isDeleting = true;
+            loopTyping();
+          }, 1800);
+        }
+      } else {
+        // deleting
+        if (index > 0) {
+          typedTitle.textContent = title.substring(0, index - 1);
+          index--;
+          setTimeout(loopTyping, 60);
+        } else {
+          // pause before typing again
+          isDeleting = false;
+          setTimeout(loopTyping, 600);
+        }
+      }
+    }
+
+    window.addEventListener("load", () => {
+      setTimeout(loopTyping, 400);
+    });
+
+    enterButton.addEventListener("click", (event) => {
+      event.preventDefault();
+      heroContent.classList.add("exit");
+
+      setTimeout(() => {
+        overlay.classList.add("active");
+      }, 220);
+
+      setTimeout(() => {
+        window.location.href = "app.html";
+      }, 1050);
+    });
+  </script>
+</body>
+</html>

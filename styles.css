@@ -60,12 +60,11 @@ a {
 }
 
 .sidebar {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  padding: 24px 18px;
-  border-right: 1px solid var(--line);
-  background: #0c0c0c;
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+  background: #050505;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .eyebrow,
@@ -873,5 +872,60 @@ textarea {
 
 .translation-task-card + .translation-task-card {
   margin-top: 1rem;
+}
+
+.sidebar {
+  display: flex;
+  align-items: stretch;
+  padding: 0;
+}
+
+.sidebar-icons {
+  width: 72px;
+  min-width: 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 10px;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+  z-index: 2;
+}
+
+.sidebar-inner {
+  flex: 1;
+  min-width: 0;
+  padding: 24px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  overflow-y: auto;
+}
+
+.sidebar-panel,
+.brand-block,
+.sidebar-nav {
+  width: 100%;
+}
+
+.sidebar-nav {
+  display: grid;
+  gap: 10px;
+}
+
+.icon-button {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: #111;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.icon-button:hover {
+  border-color: var(--line-strong);
+  background: #171717;
 }
 

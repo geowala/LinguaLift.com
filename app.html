@@ -20,137 +20,89 @@
 <body>
   <div class="app-shell">
     <aside class="sidebar">
-      
-  <div class="sidebar-peek" aria-hidden="true"></div>
-    <div class="sidebar-icons">
-  <button class="icon-button" onclick="window.location.href='index.html'">🏠</button>
-  <button class="icon-button" onclick="scrollToSection('reviewCard')">📚</button>
-  <button class="icon-button" onclick="scrollToSection('leaderboardsCard')">🏆</button>
-  <button class="icon-button" onclick="scrollToSection('sprintPrompt')">⌛</button>
-</div>
-
-  <div class="sidebar-inner">
-    <div class="brand-block">
-      <p class="eyebrow">Linguistics Training</p>
-      <h1>LinguaLift.</h1>
-      <p class="sidebar-copy">Practice past questions from OzCLO, NACLO, and the IOL (UKLO later!).</p>
-    </div>
-
-    <nav class="sidebar-nav">
-      <button class="nav-link active" data-nav-target="practice" type="button">Practice</button>
-      <button class="nav-link" data-nav-target="reviewCard" type="button">Review</button>
-      <button class="nav-link" data-nav-target="leaderboardsCard" type="button">Leaderboards</button>
-    </nav>
-    <div class="sidebar-inner">
-  <div class="brand-block">
-    <p class="eyebrow">Linguistics Training</p>
-    <h1>LinguaLift.</h1>
-    <p class="sidebar-copy">Practice past questions from OzCLO, NACLO, and the IOL (UKLO later!).</p>
-  </div>
-
-  <nav class="sidebar-nav">
-    <button class="nav-link active" data-nav-target="practice" type="button">Practice</button>
-    <button class="nav-link" data-nav-target="reviewCard" type="button">Review</button>
-    <button class="nav-link" data-nav-target="leaderboardsCard" type="button">Leaderboards</button>
-  </nav>
-
-  <section class="sidebar-panel" id="authCard">
-    <div class="panel-head">
-      <div>
-        <p class="eyebrow">Account</p>
-        <h2>Sign in</h2>
+      <div class="sidebar-peek" aria-hidden="true"></div>
+    
+      <div class="sidebar-icons">
+        <button class="icon-button" onclick="window.location.href='index.html'">🏠</button>
+        <button class="icon-button" onclick="scrollToSection('reviewCard')">📚</button>
+        <button class="icon-button" onclick="scrollToSection('leaderboardsCard')">🏆</button>
+        <button class="icon-button" onclick="scrollToSection('sprintPrompt')">⌛</button>
       </div>
-    </div>
-
-    <div class="auth-grid">
-      <input id="emailInput" type="email" placeholder="Email" />
-      <input id="passwordInput" type="password" placeholder="Password" />
-      <div class="button-row compact">
-        <button class="primary-button" id="signUpBtn" type="button">Sign up</button>
-        <button class="ghost-button" id="signInBtn" type="button">Log in</button>
-        <button class="ghost-button" id="signOutBtn" type="button">Log out</button>
-      </div>
-      <div class="feedback-card muted" id="authStatus">Not signed in.</div>
-    </div>
-  </section>
-
-  <section class="sidebar-panel">
-    <div class="panel-head">
-      <div>
-        <p class="eyebrow">Session stats</p>
-        <h2>Progress</h2>
-      </div>
-    </div>
-    <div class="stats-grid">
-      <article>
-        <span id="statSolved">0</span>
-        <p>Solved</p>
-      </article>
-      <article>
-        <span id="statAccuracy">0%</span>
-        <p>Accuracy</p>
-      </article>
-      <article>
-        <span id="statReview">0</span>
-        <p>Review queue</p>
-      </article>
-      <article>
-        <span id="statBest">0</span>
-        <p>Best sprint</p>
-      </article>
-    </div>
-  </section>
-
-  <section class="sidebar-panel">
-    <div class="panel-head">
-      <div>
-        <p class="eyebrow">Recent tasks</p>
-        <h2>History</h2>
-      </div>
-      <span id="historyCount" class="panel-meta">0 items</span>
-    </div>
-    <div id="historyList" class="history-list"></div>
-  </section>
-</div>
-    <section class="sidebar-panel">
-      <div class="panel-head">
-        <div>
-          <p class="eyebrow">Session stats</p>
-          <h2>Progress</h2>
+    
+      <div class="sidebar-inner">
+        <div class="brand-block">
+          <p class="eyebrow">Linguistics Training</p>
+          <h1>LinguaLift.</h1>
+          <p class="sidebar-copy">
+            Practice past questions from OzCLO, NACLO, and the IOL (UKLO later!).
+          </p>
         </div>
+    
+        <nav class="sidebar-nav">
+          <button class="nav-link active" data-nav-target="practice" type="button">Practice</button>
+          <button class="nav-link" data-nav-target="reviewCard" type="button">Review</button>
+          <button class="nav-link" data-nav-target="leaderboardsCard" type="button">Leaderboards</button>
+        </nav>
+    
+        <section class="sidebar-panel" id="authCard">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Account</p>
+              <h2>Sign in</h2>
+            </div>
+          </div>
+    
+          <div class="auth-grid">
+            <input id="emailInput" type="email" placeholder="Email" />
+            <input id="passwordInput" type="password" placeholder="Password" />
+            <div class="button-row compact">
+              <button class="primary-button" id="signUpBtn" type="button">Sign up</button>
+              <button class="ghost-button" id="signInBtn" type="button">Log in</button>
+              <button class="ghost-button" id="signOutBtn" type="button">Log out</button>
+            </div>
+            <div class="feedback-card muted" id="authStatus">Not signed in.</div>
+          </div>
+        </section>
+    
+        <section class="sidebar-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Session stats</p>
+              <h2>Progress</h2>
+            </div>
+          </div>
+          <div class="stats-grid">
+            <article>
+              <span id="statSolved">0</span>
+              <p>Solved</p>
+            </article>
+            <article>
+              <span id="statAccuracy">0%</span>
+              <p>Accuracy</p>
+            </article>
+            <article>
+              <span id="statReview">0</span>
+              <p>Review queue</p>
+            </article>
+            <article>
+              <span id="statBest">0</span>
+              <p>Best sprint</p>
+            </article>
+          </div>
+        </section>
+    
+        <section class="sidebar-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Recent tasks</p>
+              <h2>History</h2>
+            </div>
+            <span id="historyCount" class="panel-meta">0 items</span>
+          </div>
+          <div id="historyList" class="history-list"></div>
+        </section>
       </div>
-      <div class="stats-grid">
-        <article>
-          <span id="statSolved">0</span>
-          <p>Solved</p>
-        </article>
-        <article>
-          <span id="statAccuracy">0%</span>
-          <p>Accuracy</p>
-        </article>
-        <article>
-          <span id="statReview">0</span>
-          <p>Review queue</p>
-        </article>
-        <article>
-          <span id="statBest">0</span>
-          <p>Best sprint</p>
-        </article>
-      </div>
-    </section>
-
-    <section class="sidebar-panel">
-      <div class="panel-head">
-        <div>
-          <p class="eyebrow">Recent tasks</p>
-          <h2>History</h2>
-        </div>
-        <span id="historyCount" class="panel-meta">0 items</span>
-      </div>
-      <div id="historyList" class="history-list"></div>
-    </section>
-  </div>
-</aside>
+    </aside>
     <main class="main-shell" id="practice">
       
       <header class="topbar">

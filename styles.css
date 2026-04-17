@@ -330,7 +330,19 @@ textarea {
   width: 100%;
   text-align: left;
   cursor: pointer;
+  color: var(--text);
 }
+
+.problem-list-item strong {
+  color: var(--text);
+}
+
+.problem-list-item {
+  background: var(--panel);
+  border: 1px solid var(--line);
+}
+
+
 
 .problem-kind {
   display: inline-block;

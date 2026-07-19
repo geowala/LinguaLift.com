@@ -1,16 +1,12 @@
 // ============================================
-// LinguaLift - Supabase-Powered Version (DEBUG)
+// LinguaLift - Supabase-Powered Version
 // Problems fetched from DB, cached locally, checkers rebuilt client-side
 // ============================================
 
-const SUPABASE_URL = "https://mlvehqegewrhjabbhixo.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1sdmVocWVnZXdyaGphYmJoaXhvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ0MDI3MDksImV4cCI6MjA5OTk3ODcwOX0.LdXCT3i5NosUpClmP2gtZBgJOtltPlTKl3N9HR9wu-A";
-
-console.log('[DEBUG] Initializing Supabase client...');
-console.log('[DEBUG] URL:', SUPABASE_URL);
+const SUPABASE_URL = "https://jlmbxmjeopycmikcpalr.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpsbWJ4bWplb3B5Y21pa2NwYWxyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNzQ4ODAsImV4cCI6MjA5MTg1MDg4MH0.A55QtmLMwsS43XEhJanh7Cw5s-F23oDQpBxFk5hR634";
 
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-console.log('[DEBUG] Supabase client created');
 
 // ============================================
 // Problem Fetching & Caching
@@ -21,68 +17,43 @@ const CACHE_TIME_KEY = 'problems-cache-time';
 const CACHE_TTL = 1000 * 60 * 60; // 1 hour
 
 async function fetchProblems() {
-  console.log('[DEBUG] fetchProblems() called');
-
   // 1. Try cache first
   const cached = localStorage.getItem(CACHE_KEY);
   const cacheTime = localStorage.getItem(CACHE_TIME_KEY);
 
-  console.log('[DEBUG] Cache exists:', !!cached);
-  console.log('[DEBUG] Cache time:', cacheTime);
-
   if (cached && cacheTime && Date.now() - Number(cacheTime) < CACHE_TTL) {
-    console.log('[DEBUG] Using cached problems');
-    try {
-      const parsed = JSON.parse(cached);
-      console.log('[DEBUG] Cached problems count:', parsed.length);
-      return parsed.map(p => transformProblemFromDB(p));
-    } catch (e) {
-      console.error('[DEBUG] Failed to parse cache:', e);
-    }
+    console.log('[Cache] Using cached problems');
+    const parsed = JSON.parse(cached);
+    return parsed.map(p => transformProblemFromDB(p));
   }
 
   // 2. Fetch from Supabase
-  console.log('[DEBUG] Fetching from Supabase...');
-  try {
-    const { data, error } = await supabaseClient
-      .from('problems')
-      .select('*')
-      .order('created_at', { ascending: false });
+  console.log('[Supabase] Fetching problems...');
+  const { data, error } = await supabaseClient
+    .from('problems')
+    .select('*')
+    .order('created_at', { ascending: false });
 
-    console.log('[DEBUG] Supabase response:', { dataLength: data?.length, error });
-
-    if (error) {
-      console.error('[DEBUG] Supabase fetch failed:', error);
-      // Fall back to stale cache
-      if (cached) {
-        console.log('[DEBUG] Falling back to stale cache');
-        const parsed = JSON.parse(cached);
-        return parsed.map(p => transformProblemFromDB(p));
-      }
-      return [];
+  if (error) {
+    console.error('[Supabase] Fetch failed:', error);
+    // Fall back to stale cache
+    if (cached) {
+      console.log('[Cache] Falling back to stale cache');
+      const parsed = JSON.parse(cached);
+      return parsed.map(p => transformProblemFromDB(p));
     }
-
-    if (!data || data.length === 0) {
-      console.warn('[DEBUG] No problems returned from Supabase');
-      return [];
-    }
-
-    // 3. Cache raw data (no functions)
-    console.log('[DEBUG] Caching', data.length, 'problems');
-    localStorage.setItem(CACHE_KEY, JSON.stringify(data));
-    localStorage.setItem(CACHE_TIME_KEY, String(Date.now()));
-
-    // 4. Transform and return
-    return data.map(p => transformProblemFromDB(p));
-  } catch (e) {
-    console.error('[DEBUG] Exception during fetch:', e);
     return [];
   }
+
+  // 3. Cache raw data (no functions)
+  localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+  localStorage.setItem(CACHE_TIME_KEY, String(Date.now()));
+
+  // 4. Transform and return
+  return data.map(p => transformProblemFromDB(p));
 }
 
 function transformProblemFromDB(row) {
-  console.log('[DEBUG] Transforming problem:', row.slug);
-
   // Rebuild camelCase aliases for backward compatibility with existing UI
   const problem = {
     id: row.slug,
@@ -129,6 +100,7 @@ function buildChecker(problem) {
   if (problem.mode === 'translation_table') {
     const tables = problem.translation_tables || [];
     return (inputs) => {
+      // inputs: array of { tableIndex, rowIndex, value }
       let score = 0, total = 0;
       inputs.forEach(({ tableIndex, rowIndex, value }) => {
         const accepted = (tables[tableIndex]?.acceptable_answers?.[rowIndex] || [])
@@ -323,34 +295,21 @@ const translationTableWrap = document.querySelector("#translationTableWrap");
 initialize();
 
 async function initialize() {
-  console.log('[DEBUG] initialize() called');
-
   // Show loading state
-  if (problemList) {
-    problemList.innerHTML = '<div class="feedback-card info">Loading problems...</div>';
-  }
+  problemList.innerHTML = '<div class="feedback-card info">Loading problems...</div>';
 
   // Fetch problems from Supabase (or cache)
-  console.log('[DEBUG] About to fetch problems...');
   problems = await fetchProblems();
-  console.log('[DEBUG] Fetched problems:', problems.length);
   filteredProblems = [...problems];
 
   if (problems.length === 0) {
-    console.error('[DEBUG] No problems loaded!');
-    if (problemList) {
-      problemList.innerHTML = '<div class="feedback-card error">Failed to load problems. Check console (Cmd+Option+J) for details.</div>';
-    }
+    problemList.innerHTML = '<div class="feedback-card error">Failed to load problems. Check your connection.</div>';
     return;
   }
 
-  console.log('[DEBUG] Populating filters...');
   populateFilters();
-  console.log('[DEBUG] Attaching events...');
   attachEvents();
-  console.log('[DEBUG] Applying filters...');
   applyFilters();
-  console.log('[DEBUG] Rendering dashboard...');
   renderDashboard();
   renderHistory();
   renderReview();
@@ -361,8 +320,6 @@ async function initialize() {
     await updateAuthUI();
     await loadUserData();
   });
-
-  console.log('[DEBUG] Initialization complete');
 }
 
 // ============================================

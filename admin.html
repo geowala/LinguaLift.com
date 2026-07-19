@@ -604,9 +604,12 @@
 
       var topics = {}, diffs = {}, contests = {};
       allProblems.forEach(function(p) {
-        topics[p.topic] = (topics[p.topic] || 0) + 1;
-        diffs[p.difficulty] = (diffs[p.difficulty] || 0) + 1;
-        contests[p.contest] = (contests[p.contest] || 0) + 1;
+        var topic = (p && p.topic) || "Uncategorized";
+        var diff = (p && p.difficulty != null) ? String(p.difficulty) : "Uncategorized";
+        var contest = (p && p.contest) || "Uncategorized";
+        topics[topic] = (topics[topic] || 0) + 1;
+        diffs[diff] = (diffs[diff] || 0) + 1;
+        contests[contest] = (contests[contest] || 0) + 1;
       });
 
       function renderBreakdown(containerId, obj, sortByValue) {
@@ -628,7 +631,7 @@
       if (!recent.length) { recentContainer.innerHTML = '<div class="empty-state"><p>No problems added yet</p></div>'; }
       else {
         recentContainer.innerHTML = recent.map(function(p) {
-          return '<div class="breakdown-row"><span>' + escapeHtml(p.title) + '</span><span>' + escapeHtml(p.mode) + '</span></div>';
+          return '<div class="breakdown-row"><span>' + escapeHtml((p && p.title) || "Untitled") + '</span><span>' + escapeHtml((p && p.mode) || "unknown") + '</span></div>';
         }).join("");
       }
     }
@@ -646,15 +649,19 @@
       container.innerHTML = matchingPrompts.map(function(p, i) {
         return '<div class="builder-row matching-row">' +
           '<span class="row-label">' + (i + 1) + '.</span>' +
-          '<input type="text" placeholder="Prompt text..." value="' + escapeHtml(p) + '" data-prompt-idx="' + i + '" />' +
+          '<input type="text" placeholder="Prompt text..." autocomplete="off" data-prompt-idx="' + i + '" />' +
           '<span></span><button class="remove-btn" data-remove-prompt="' + i + '">&#10005;</button></div>';
       }).join("");
+
       container.querySelectorAll("[data-prompt-idx]").forEach(function(input) {
+        var idx = Number(input.dataset.promptIdx);
+        input.value = (matchingPrompts[idx] != null) ? matchingPrompts[idx] : "";
         input.addEventListener("input", function() {
-          matchingPrompts[Number(input.dataset.promptIdx)] = input.value;
+          matchingPrompts[idx] = input.value;
           renderAnswerKey();
         });
       });
+
       container.querySelectorAll("[data-remove-prompt]").forEach(function(btn) {
         btn.addEventListener("click", function() {
           matchingPrompts.splice(Number(btn.dataset.removePrompt), 1);
@@ -667,21 +674,28 @@
       var container = document.getElementById("matchingOptionsList");
       container.innerHTML = matchingOptions.map(function(o, i) {
         return '<div class="builder-row option-row">' +
-          '<input type="text" placeholder="A" maxlength="3" style="text-align:center;" value="' + escapeHtml(o.key) + '" data-option-key="' + i + '" />' +
-          '<input type="text" placeholder="Option text..." value="' + escapeHtml(o.text) + '" data-option-text="' + i + '" />' +
+          '<input type="text" placeholder="A" maxlength="3" style="text-align:center;" autocomplete="off" data-option-key="' + i + '" />' +
+          '<input type="text" placeholder="Option text..." autocomplete="off" data-option-text="' + i + '" />' +
           '<button class="remove-btn" data-remove-option="' + i + '">&#10005;</button></div>';
       }).join("");
+
       container.querySelectorAll("[data-option-key]").forEach(function(input) {
+        var idx = Number(input.dataset.optionKey);
+        input.value = ((matchingOptions[idx] && matchingOptions[idx].key) != null) ? matchingOptions[idx].key : "";
         input.addEventListener("input", function() {
-          matchingOptions[Number(input.dataset.optionKey)].key = input.value;
+          matchingOptions[idx].key = input.value;
           renderAnswerKey();
         });
       });
+
       container.querySelectorAll("[data-option-text]").forEach(function(input) {
+        var idx = Number(input.dataset.optionText);
+        input.value = ((matchingOptions[idx] && matchingOptions[idx].text) != null) ? matchingOptions[idx].text : "";
         input.addEventListener("input", function() {
-          matchingOptions[Number(input.dataset.optionText)].text = input.value;
+          matchingOptions[idx].text = input.value;
         });
       });
+
       container.querySelectorAll("[data-remove-option]").forEach(function(btn) {
         btn.addEventListener("click", function() {
           matchingOptions.splice(Number(btn.dataset.removeOption), 1);
@@ -698,7 +712,9 @@
       }
       grid.innerHTML = matchingPrompts.map(function(_, i) {
         var opts = '<option value="">-</option>' + matchingOptions.map(function(o) {
-          return '<option value="' + escapeHtml(o.key) + '">' + escapeHtml(o.key) + " &mdash; " + escapeHtml(o.text).substring(0, 30) + "</option>";
+          var key = (o && o.key) || "";
+          var text = (o && o.text) || "";
+          return '<option value="' + escapeHtml(key) + '">' + escapeHtml(key) + " &mdash; " + escapeHtml(text).substring(0, 30) + "</option>";
         }).join("");
         return '<div class="answer-select"><label>Item ' + (i + 1) + '</label><select data-answer-idx="' + i + '">' + opts + '</select></div>';
       }).join("");
@@ -933,42 +949,43 @@
       authFeedback.textContent = msg;
       authFeedback.className = "feedback success";
     }
+
     async function updateUI(user) {
-  if (user) {
-    try {
-      const { data: profile, error } = await supabase
-        .from('user_profiles')
-        .select('role')
-        .eq('id', user.id)
-        .single();
+      if (user) {
+        try {
+          var result = await supabase
+            .from('user_profiles')
+            .select('role')
+            .eq('id', user.id)
+            .single();
 
-      if (error || !profile || profile.role !== 'admin') {
-        authForm.classList.add("hidden");
-        authActions.classList.remove("hidden"); // keep Sign Out visible
+          if (result.error || !result.data || result.data.role !== 'admin') {
+            authForm.classList.add("hidden");
+            authActions.classList.remove("hidden");
+            mainPanel.classList.add("hidden");
+            showAuthError("Access denied. This account does not have admin privileges.");
+            return;
+          }
+
+          authForm.classList.add("hidden");
+          authActions.classList.remove("hidden");
+          mainPanel.classList.remove("hidden");
+          showAuthSuccess("Signed in as " + user.email + " (admin)");
+          loadDashboard();
+        } catch (err) {
+          authForm.classList.add("hidden");
+          authActions.classList.remove("hidden");
+          mainPanel.classList.add("hidden");
+          showAuthError("Error verifying admin status: " + (err && err.message ? err.message : String(err)));
+        }
+      } else {
+        authForm.classList.remove("hidden");
+        authActions.classList.add("hidden");
         mainPanel.classList.add("hidden");
-        showAuthError("Access denied. This account does not have admin privileges.");
-        return;
+        authFeedback.textContent = "Not signed in.";
+        authFeedback.className = "feedback";
       }
-
-      authForm.classList.add("hidden");
-      authActions.classList.remove("hidden");
-      mainPanel.classList.remove("hidden");
-      showAuthSuccess("Signed in as " + user.email + " (admin)");
-      loadDashboard();
-    } catch (err) {
-      authForm.classList.add("hidden");
-      authActions.classList.remove("hidden");
-      mainPanel.classList.add("hidden");
-      showAuthError("Error verifying admin status: " + (err && err.message ? err.message : String(err)));
     }
-  } else {
-    authForm.classList.remove("hidden");
-    authActions.classList.add("hidden");
-    mainPanel.classList.add("hidden");
-    authFeedback.textContent = "Not signed in.";
-    authFeedback.className = "feedback";
-  }
-}
 
     signInBtn.addEventListener("click", function() {
       var email = emailInput.value.trim();
@@ -1009,20 +1026,14 @@
       supabase.auth.signOut().then(function() { updateUI(null); });
     });
 
-    // Near the bottom of the script, just above "// Utils"
+    supabase.auth.getUser().then(function(result) {
+      if (result.data.user) updateUI(result.data.user).catch(console.error);
+    });
 
-supabase.auth.getUser().then(function(result) {
-  if (result.data.user) updateUI(result.data.user).catch(console.error);
-});
-
-supabase.auth.onAuthStateChange(function(event, session) {
-  if (session && session.user) updateUI(session.user).catch(console.error);
-  else updateUI(null);
-});
-
-// Utils
-function escapeHtml(text) {
-  // ... rest of your code
+    supabase.auth.onAuthStateChange(function(event, session) {
+      if (session && session.user) updateUI(session.user).catch(console.error);
+      else updateUI(null);
+    });
 
     // Build payload
     function buildPayload() {
@@ -1155,8 +1166,14 @@ function escapeHtml(text) {
             return;
           }
           listContainer.innerHTML = result.data.map(function(p) {
+            var title = (p && p.title) || "Untitled";
+            var contest = (p && p.contest) || "Unknown";
+            var topic = (p && p.topic) || "Unknown";
+            var year = (p && p.year) || "-";
+            var diff = (p && p.difficulty != null) ? p.difficulty : "-";
+            var mode = (p && p.mode) || "unknown";
             return '<div class="problem-item">' +
-              '<div><strong>' + escapeHtml(p.title) + '</strong><span>' + escapeHtml(p.contest) + ' &middot; ' + escapeHtml(p.topic) + ' &middot; ' + p.year + ' &middot; Diff ' + p.difficulty + ' &middot; ' + escapeHtml(p.mode) + '</span></div>' +
+              '<div><strong>' + escapeHtml(title) + '</strong><span>' + escapeHtml(contest) + ' &middot; ' + escapeHtml(topic) + ' &middot; ' + year + ' &middot; Diff ' + diff + ' &middot; ' + escapeHtml(mode) + '</span></div>' +
               '<div class="problem-actions">' +
                 '<button class="btn btn-small" data-clone="' + escapeHtml(p.slug) + '">Clone</button>' +
                 '<button class="btn btn-small btn-danger del-btn" data-slug="' + escapeHtml(p.slug) + '">Delete</button>' +
@@ -1204,6 +1221,11 @@ function escapeHtml(text) {
     deleteAllBtn.addEventListener("click", function() {
       if (!confirm("Delete ALL problems?")) return;
       if (!confirm("Really? This cannot be undone.")) return;
+      var code = prompt("Type DELETE to confirm:");
+      if (code !== "DELETE") {
+        showToast("Deletion cancelled", "error");
+        return;
+      }
       supabase.from("problems").delete().neq("id", "00000000-0000-0000-0000-000000000000")
         .then(function() {
           listContainer.innerHTML = '<div class="feedback success">All problems deleted.</div>';
@@ -1242,7 +1264,7 @@ function escapeHtml(text) {
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
     }
-  }
+
     // Init
     updateModeFields();
     renderMatchingPrompts(); renderMatchingOptions(); renderAnswerKey();

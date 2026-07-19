@@ -933,21 +933,42 @@
       authFeedback.textContent = msg;
       authFeedback.className = "feedback success";
     }
-    function updateUI(user) {
-      if (user) {
+    async function updateUI(user) {
+  if (user) {
+    try {
+      const { data: profile, error } = await supabase
+        .from('user_profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+      if (error || !profile || profile.role !== 'admin') {
         authForm.classList.add("hidden");
-        authActions.classList.remove("hidden");
-        mainPanel.classList.remove("hidden");
-        showAuthSuccess("Signed in as " + user.email);
-        loadDashboard();
-      } else {
-        authForm.classList.remove("hidden");
-        authActions.classList.add("hidden");
+        authActions.classList.remove("hidden"); // keep Sign Out visible
         mainPanel.classList.add("hidden");
-        authFeedback.textContent = "Not signed in.";
-        authFeedback.className = "feedback";
+        showAuthError("Access denied. This account does not have admin privileges.");
+        return;
       }
+
+      authForm.classList.add("hidden");
+      authActions.classList.remove("hidden");
+      mainPanel.classList.remove("hidden");
+      showAuthSuccess("Signed in as " + user.email + " (admin)");
+      loadDashboard();
+    } catch (err) {
+      authForm.classList.add("hidden");
+      authActions.classList.remove("hidden");
+      mainPanel.classList.add("hidden");
+      showAuthError("Error verifying admin status: " + (err && err.message ? err.message : String(err)));
     }
+  } else {
+    authForm.classList.remove("hidden");
+    authActions.classList.add("hidden");
+    mainPanel.classList.add("hidden");
+    authFeedback.textContent = "Not signed in.";
+    authFeedback.className = "feedback";
+  }
+}
 
     signInBtn.addEventListener("click", function() {
       var email = emailInput.value.trim();
@@ -988,14 +1009,20 @@
       supabase.auth.signOut().then(function() { updateUI(null); });
     });
 
-    supabase.auth.getUser().then(function(result) {
-      if (result.data.user) updateUI(result.data.user);
-    });
+    // Near the bottom of the script, just above "// Utils"
 
-    supabase.auth.onAuthStateChange(function(event, session) {
-      if (session && session.user) updateUI(session.user);
-      else updateUI(null);
-    });
+supabase.auth.getUser().then(function(result) {
+  if (result.data.user) updateUI(result.data.user).catch(console.error);
+});
+
+supabase.auth.onAuthStateChange(function(event, session) {
+  if (session && session.user) updateUI(session.user).catch(console.error);
+  else updateUI(null);
+});
+
+// Utils
+function escapeHtml(text) {
+  // ... rest of your code
 
     // Build payload
     function buildPayload() {
@@ -1215,7 +1242,7 @@
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
     }
-
+  }
     // Init
     updateModeFields();
     renderMatchingPrompts(); renderMatchingOptions(); renderAnswerKey();

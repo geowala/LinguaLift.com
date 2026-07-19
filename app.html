@@ -23,10 +23,11 @@
       <div class="sidebar-peek" aria-hidden="true"></div>
     
       <div class="sidebar-icons">
-        <button class="icon-button" onclick="window.location.href='index.html'">🏠</button>
-        <button class="icon-button" onclick="scrollToSection('reviewCard')">📚</button>
-        <button class="icon-button" onclick="scrollToSection('leaderboardsCard')">🏆</button>
-        <button class="icon-button" onclick="scrollToSection('sprintPrompt')">⌛</button>
+        <button class="icon-button" onclick="window.location.href='index.html'" title="Home">🏠</button>
+        <button class="icon-button" onclick="scrollToSection('reviewCard')" title="Review">📚</button>
+        <button class="icon-button" onclick="scrollToSection('leaderboardsCard')" title="Leaderboards">🏆</button>
+        <button class="icon-button" onclick="scrollToSection('sprintPrompt')" title="Sprint">⌛</button>
+        <button class="icon-button" onclick="window.location.href='admin.html'" title="Admin">⚙️</button>
       </div>
     
       <div class="sidebar-inner">
@@ -42,6 +43,7 @@
           <button class="nav-link active" data-nav-target="practice" type="button">Practice</button>
           <button class="nav-link" data-nav-target="reviewCard" type="button">Review</button>
           <button class="nav-link" data-nav-target="leaderboardsCard" type="button">Leaderboards</button>
+          <a class="nav-link" href="admin.html" style="text-decoration:none;color:inherit;">Admin Panel →</a>
         </nav>
     
         <section class="sidebar-panel" id="authCard">

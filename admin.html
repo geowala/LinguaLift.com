@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinguaLift Admin</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #090909;
+      color: #f2ede4;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      padding: 2rem;
+      line-height: 1.6;
+    }
+    .container { max-width: 960px; margin: 0 auto; }
+    h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+    .subtitle { color: #aea391; font-size: 0.85rem; margin-bottom: 2rem; }
+    .card {
+      border: 1px solid #2c2c2c;
+      background: #121212;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .form-group { margin-bottom: 16px; }
+    label {
+      display: block;
+      color: #aea391;
+      font-size: 0.85rem;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid #3a3a3a;
+      border-radius: 8px;
+      background: #141414;
+      color: #f2ede4;
+      padding: 10px 12px;
+      font: inherit;
+      font-size: 0.95rem;
+    }
+    textarea { min-height: 80px; resize: vertical; }
+    .btn {
+      display: inline-block;
+      padding: 10px 18px;
+      border-radius: 8px;
+      border: 1px solid #3a3a3a;
+      background: #141414;
+      color: #f2ede4;
+      cursor: pointer;
+      font: inherit;
+      font-size: 0.9rem;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+    .btn-primary {
+      background: #f1e6bc;
+      color: #111;
+      border: none;
+    }
+    .btn-danger { color: #d5988a; border-color: #d5988a; }
+    .btn-small { padding: 6px 12px; font-size: 0.8rem; }
+    .feedback {
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #2c2c2c;
+      margin-top: 12px;
+      font-size: 0.85rem;
+      white-space: pre-wrap;
+    }
+    .feedback.success { color: #8fd1a8; border-color: rgba(143,209,168,0.3); }
+    .feedback.error { color: #d5988a; border-color: rgba(213,152,138,0.3); }
+    .feedback.info { color: #a8c5ea; border-color: rgba(168,197,234,0.3); }
+    .hidden { display: none !important; }
+    .tabs { display: flex; gap: 8px; margin-bottom: 24px; border-bottom: 1px solid #2c2c2c; padding-bottom: 12px; }
+    .tab-btn { background: transparent; color: #aea391; border: none; padding: 8px 16px; cursor: pointer; }
+    .tab-btn.active { color: #f1e6bc; border-bottom: 2px solid #f1e6bc; }
+    .problem-item {
+      border: 1px solid #2c2c2c;
+      background: #121212;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .problem-item strong { display: block; }
+    .problem-item span { color: #aea391; font-size: 0.8rem; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 600px) { .two-col { grid-template-columns: 1fr; } body { padding: 1rem; } }
+
+    /* Builder styles */
+    .builder-section {
+      border: 1px solid #2c2c2c;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      background: #0f0f0f;
+    }
+    .builder-section h4 {
+      margin: 0 0 12px 0;
+      font-size: 0.95rem;
+      color: #f1e6bc;
+    }
+    .builder-row {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 8px;
+      align-items: center;
+    }
+    .builder-row.matching-row { grid-template-columns: 40px 1fr 100px 40px; }
+    .builder-row.option-row { grid-template-columns: 50px 1fr 40px; }
+    .builder-row.table-row { grid-template-columns: 50px 1fr 1fr 40px; }
+    .builder-row.dataset-row { grid-template-columns: 1fr 40px; }
+    .builder-row.dataset-header-row { grid-template-columns: 1fr 40px; }
+    .builder-row input {
+      padding: 8px 10px;
+      font-size: 0.9rem;
+    }
+    .builder-row .row-label {
+      color: #aea391;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+    }
+    .remove-btn {
+      background: transparent;
+      border: 1px solid #d5988a;
+      color: #d5988a;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      padding: 4px 8px;
+    }
+    .remove-btn:hover { background: rgba(213,152,138,0.1); }
+    .answer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .answer-select {
+      display: grid;
+      gap: 4px;
+    }
+    .answer-select label {
+      font-size: 0.78rem;
+    }
+    .answer-select select {
+      padding: 8px;
+    }
+    .table-builder {
+      border: 1px solid #2c2c2c;
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 12px;
+      background: #141414;
+    }
+    .table-builder h5 {
+      margin: 0 0 10px 0;
+      color: #f2ede4;
+      font-size: 0.9rem;
+    }
+    .table-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .table-meta input {
+      padding: 8px 10px;
+      font-size: 0.9rem;
+    }
+    .preview-box {
+      background: #0a0a0a;
+      border: 1px solid #2c2c2c;
+      border-radius: 8px;
+      padding: 12px;
+      font-family: "SF Mono", Monaco, monospace;
+      font-size: 0.75rem;
+      color: #8fd1a8;
+      max-height: 200px;
+      overflow: auto;
+      white-space: pre-wrap;
+      margin-top: 12px;
+    }
+    .tag-input {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      border: 1px solid #3a3a3a;
+      border-radius: 8px;
+      background: #141414;
+      padding: 8px;
+      min-height: 44px;
+    }
+    .tag-input input {
+      flex: 1;
+      min-width: 120px;
+      border: none;
+      background: transparent;
+      padding: 4px;
+    }
+    .tag {
+      background: #1a1a1a;
+      border: 1px solid #3a3a3a;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tag button {
+      background: none;
+      border: none;
+      color: #d5988a;
+      cursor: pointer;
+      font-size: 0.75rem;
+      padding: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>LinguaLift Admin</h1>
+    <p class="subtitle">Manage problems for the training platform</p>
+
+    <!-- Auth -->
+    <div class="card" id="authCard">
+      <label style="font-size:1rem;color:#f2ede4;margin-bottom:12px;display:block;">Authentication</label>
+      <div id="authForm">
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="email" placeholder="you@example.com" />
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="password" placeholder="Password" />
+        </div>
+        <button class="btn btn-primary" id="signInBtn">Sign In</button>
+        <button class="btn" id="signUpBtn">Create Account</button>
+      </div>
+      <div id="authActions" class="hidden">
+        <button class="btn" id="signOutBtn">Sign Out</button>
+      </div>
+      <div class="feedback" id="authFeedback">Not signed in.</div>
+    </div>
+
+    <!-- Main Panel -->
+    <div id="mainPanel" class="hidden">
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="add">Add Problem</button>
+        <button class="tab-btn" data-tab="list">View All</button>
+        <button class="tab-btn" data-tab="cache">Cache</button>
+      </div>
+
+      <!-- Add Tab -->
+      <div id="tab-add" class="tab-content">
+        <div class="card">
+          <label style="font-size:1rem;color:#f2ede4;margin-bottom:12px;display:block;">Add New Problem</label>
+
+          <div class="two-col">
+            <div class="form-group">
+              <label>Slug (unique ID) *</label>
+              <input type="text" id="pSlug" placeholder="ozclo-example-2025" />
+            </div>
+            <div class="form-group">
+              <label>Mode *</label>
+              <select id="pMode">
+                <option value="matching">Matching</option>
+                <option value="translation_table">Translation Table</option>
+                <option value="text">Text Answer</option>
+                <option value="multi_task">Multi-Task</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Title *</label>
+            <input type="text" id="pTitle" placeholder="Problem title" />
+          </div>
+
+          <div class="two-col">
+            <div class="form-group">
+              <label>Contest *</label>
+              <select id="pContest">
+                <option>OzCLO</option>
+                <option>NACLO</option>
+                <option>IOL</option>
+                <option>UKLO</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Year *</label>
+              <input type="number" id="pYear" value="2025" />
+            </div>
+          </div>
+
+          <div class="two-col">
+            <div class="form-group">
+              <label>Topic *</label>
+              <select id="pTopic">
+                <option>Syntax</option>
+                <option>Morphology</option>
+                <option>Phonology</option>
+                <option>Grammar</option>
+                <option>Translation</option>
+                <option>Writing systems</option>
+                <option>Numeral systems</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Difficulty (1-5) *</label>
+              <input type="number" id="pDifficulty" min="1" max="5" value="3" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Label</label>
+            <input type="text" id="pLabel" placeholder="Adapted from past paper" />
+          </div>
+
+          <div class="two-col">
+            <div class="form-group">
+              <label>Source Name</label>
+              <input type="text" id="pSourceName" placeholder="OzCLO 2025 Round 1" />
+            </div>
+            <div class="form-group">
+              <label>Source URL</label>
+              <input type="url" id="pSourceUrl" placeholder="https://..." />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Prompt *</label>
+            <textarea id="pPrompt" placeholder="Instructions for the student..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Hint</label>
+            <textarea id="pHint" placeholder="Hint shown to student..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Solution</label>
+            <textarea id="pSolution" placeholder="Full worked solution..."></textarea>
+          </div>
+
+          <!-- MODE BUILDERS -->
+
+          <!-- Matching Builder -->
+          <div id="builderMatching">
+            <div class="builder-section">
+              <h4>Prompt Items (what the student matches)</h4>
+              <div id="matchingPromptsList"></div>
+              <button class="btn btn-small" id="addPromptBtn">+ Add Prompt</button>
+            </div>
+
+            <div class="builder-section">
+              <h4>Options (answers to choose from)</h4>
+              <div id="matchingOptionsList"></div>
+              <button class="btn btn-small" id="addOptionBtn">+ Add Option</button>
+            </div>
+
+            <div class="builder-section">
+              <h4>Answer Key</h4>
+              <p style="color:#aea391;font-size:0.8rem;margin-bottom:8px;">Select the correct option for each prompt.</p>
+              <div class="answer-grid" id="answerKeyGrid"></div>
+            </div>
+          </div>
+
+          <!-- Translation Table Builder -->
+          <div id="builderTranslation" class="hidden">
+            <div id="translationTablesContainer"></div>
+            <button class="btn btn-small" id="addTranslationTableBtn">+ Add Translation Table</button>
+          </div>
+
+          <!-- Text Answer Builder -->
+          <div id="builderText" class="hidden">
+            <div class="builder-section">
+              <h4>Acceptable Answers</h4>
+              <p style="color:#aea391;font-size:0.8rem;margin-bottom:8px;">Enter each acceptable answer. Press Enter or comma to add. Case-insensitive.</p>
+              <div class="tag-input" id="textAnswerTags">
+                <input type="text" id="textAnswerInput" placeholder="Type answer and press Enter..." />
+              </div>
+            </div>
+          </div>
+
+          <!-- Multi-Task Builder -->
+          <div id="builderMultiTask" class="hidden">
+            <p style="color:#aea391;font-size:0.85rem;">Multi-task problems are complex. For now, use the JSON field below or build as a matching/translation problem first.</p>
+            <div class="form-group">
+              <label>Tasks (JSON)</label>
+              <textarea class="json-field" id="pTasksRaw" style="min-height:120px;font-family:monospace;font-size:0.8rem;">[]</textarea>
+            </div>
+          </div>
+
+          <!-- Datasets Builder -->
+          <div class="builder-section">
+            <h4>Reference Datasets</h4>
+            <p style="color:#aea391;font-size:0.8rem;margin-bottom:8px;">Optional data tables shown to the student.</p>
+            <div id="datasetsContainer"></div>
+            <button class="btn btn-small" id="addDatasetBtn">+ Add Dataset</button>
+          </div>
+
+          <button class="btn btn-primary" id="addBtn">Add Problem</button>
+          <button class="btn" id="previewBtn">Preview JSON</button>
+          <button class="btn" id="clearBtn">Clear</button>
+
+          <div class="feedback" id="addFeedback">Fill in required fields and click Add Problem.</div>
+          <div class="preview-box hidden" id="jsonPreview"></div>
+        </div>
+      </div>
+
+      <!-- List Tab -->
+      <div id="tab-list" class="tab-content hidden">
+        <div class="card">
+          <label style="font-size:1rem;color:#f2ede4;margin-bottom:12px;display:block;">All Problems</label>
+          <button class="btn" id="refreshBtn">Refresh List</button>
+          <button class="btn btn-danger" id="deleteAllBtn">Delete All</button>
+          <div id="listContainer" style="margin-top:16px;"></div>
+        </div>
+      </div>
+
+      <!-- Cache Tab -->
+      <div id="tab-cache" class="tab-content hidden">
+        <div class="card">
+          <label style="font-size:1rem;color:#f2ede4;margin-bottom:12px;display:block;">Cache Control</label>
+          <p style="color:#aea391;margin-bottom:12px;">Clear the main app cache to force a fresh fetch from Supabase.</p>
+          <button class="btn" id="clearCacheBtn">Clear Problem Cache</button>
+          <button class="btn btn-danger" id="clearAllBtn">Clear All localStorage</button>
+          <div class="feedback" id="cacheFeedback" style="margin-top:12px;">Cache controls ready.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // Config
+    var SUPABASE_URL = "https://mlvehqegewrhjabbhixo.supabase.co";
+    var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1sdmVocWVnZXdyaGphYmJoaXhvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ0MDI3MDksImV4cCI6MjA5OTk3ODcwOX0.LdXCT3i5NosUpClmP2gtZBgJOtltPlTKl3N9HR9wu-A";
+
+    console.log("[ADMIN] Script starting...");
+
+    var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // DOM refs
+    var authCard = document.getElementById("authCard");
+    var authForm = document.getElementById("authForm");
+    var authActions = document.getElementById("authActions");
+    var authFeedback = document.getElementById("authFeedback");
+    var mainPanel = document.getElementById("mainPanel");
+    var emailInput = document.getElementById("email");
+    var passwordInput = document.getElementById("password");
+    var signInBtn = document.getElementById("signInBtn");
+    var signUpBtn = document.getElementById("signUpBtn");
+    var signOutBtn = document.getElementById("signOutBtn");
+    var pMode = document.getElementById("pMode");
+    var addBtn = document.getElementById("addBtn");
+    var previewBtn = document.getElementById("previewBtn");
+    var clearBtn = document.getElementById("clearBtn");
+    var addFeedback = document.getElementById("addFeedback");
+    var refreshBtn = document.getElementById("refreshBtn");
+    var deleteAllBtn = document.getElementById("deleteAllBtn");
+    var listContainer = document.getElementById("listContainer");
+    var clearCacheBtn = document.getElementById("clearCacheBtn");
+    var clearAllBtn = document.getElementById("clearAllBtn");
+    var cacheFeedback = document.getElementById("cacheFeedback");
+    var jsonPreview = document.getElementById("jsonPreview");
+
+    // Builder state
+    var matchingPrompts = [];
+    var matchingOptions = [];
+    var translationTables = [];
+    var textAnswers = [];
+    var datasets = [];
+
+    // Tab switching
+    document.querySelectorAll(".tab-btn").forEach(function(btn) {
+      btn.addEventListener("click", function() {
+        document.querySelectorAll(".tab-btn").forEach(function(b) { b.classList.remove("active"); });
+        document.querySelectorAll(".tab-content").forEach(function(c) { c.classList.add("hidden"); });
+        btn.classList.add("active");
+        var tabId = "tab-" + btn.getAttribute("data-tab");
+        document.getElementById(tabId).classList.remove("hidden");
+        if (btn.getAttribute("data-tab") === "list") loadList();
+      });
+    });
+
+    // Mode builder toggling
+    function updateModeFields() {
+      var mode = pMode.value;
+      document.getElementById("builderMatching").classList.toggle("hidden", mode !== "matching");
+      document.getElementById("builderTranslation").classList.toggle("hidden", mode !== "translation_table");
+      document.getElementById("builderText").classList.toggle("hidden", mode !== "text");
+      document.getElementById("builderMultiTask").classList.toggle("hidden", mode !== "multi_task");
+    }
+    pMode.addEventListener("change", updateModeFields);
+
+    // ========== MATCHING BUILDER ==========
+    function renderMatchingPrompts() {
+      var container = document.getElementById("matchingPromptsList");
+      container.innerHTML = matchingPrompts.map(function(p, i) {
+        return '<div class="builder-row matching-row">' +
+          '<span class="row-label">' + (i + 1) + '.</span>' +
+          '<input type="text" placeholder="Prompt text..." value="' + escapeHtml(p) + '" data-prompt-idx="' + i + '" />' +
+          '<span></span>' +
+          '<button class="remove-btn" data-remove-prompt="' + i + '">✕</button>' +
+        '</div>';
+      }).join("");
+      container.querySelectorAll("[data-prompt-idx]").forEach(function(input) {
+        input.addEventListener("input", function() {
+          matchingPrompts[Number(input.dataset.promptIdx)] = input.value;
+          renderAnswerKey();
+        });
+      });
+      container.querySelectorAll("[data-remove-prompt]").forEach(function(btn) {
+        btn.addEventListener("click", function() {
+          matchingPrompts.splice(Number(btn.dataset.removePrompt), 1);
+          renderMatchingPrompts();
+          renderAnswerKey();
+        });
+      });
+    }
+
+    function renderMatchingOptions() {
+      var container = document.getElementById("matchingOptionsList");
+      container.innerHTML = matchingOptions.map(function(o, i) {
+        return '<div class="builder-row option-row">' +
+          '<input type="text" placeholder="A" maxlength="3" style="text-align:center;" value="' + escapeHtml(o.key) + '" data-option-key="' + i + '" />' +
+          '<input type="text" placeholder="Option text..." value="' + escapeHtml(o.text) + '" data-option-text="' + i + '" />' +
+          '<button class="remove-btn" data-remove-option="' + i + '">✕</button>' +
+        '</div>';
+      }).join("");
+      container.querySelectorAll("[data-option-key]").forEach(function(input) {
+        input.addEventListener("input", function() {
+          matchingOptions[Number(input.dataset.optionKey)].key = input.value;
+          renderAnswerKey();
+        });
+      });
+      container.querySelectorAll("[data-option-text]").forEach(function(input) {
+        input.addEventListener("input", function() {
+          matchingOptions[Number(input.dataset.optionText)].text = input.value;
+        });
+      });
+      container.querySelectorAll("[data-remove-option]").forEach(function(btn) {
+        btn.addEventListener("click", function() {
+          matchingOptions.splice(Number(btn.dataset.removeOption), 1);
+          renderMatchingOptions();
+          renderAnswerKey();
+        });
+      });
+    }
+
+    function renderAnswerKey() {
+      var grid = document.getElementById("answerKeyGrid");
+      if (!matchingPrompts.length || !matchingOptions.length) {
+        grid.innerHTML = '<p style="color:#aea391;font-size:0.8rem;">Add prompts and options first.</p>';
+        return;
+      }
+      grid.innerHTML = matchingPrompts.map(function(_, i) {
+        var opts = '<option value="">-</option>' + matchingOptions.map(function(o) {
+          return '<option value="' + escapeHtml(o.key) + '">' + escapeHtml(o.key) + " — " + escapeHtml(o.text).substring(0, 30) + "</option>";
+        }).join("");
+        return '<div class="answer-select">' +
+          '<label>Item ' + (i + 1) + '</label>' +
+          '<select data-answer-idx="' + i + '">' + opts + '</select>' +
+        '</div>';
+      }).join("");
+    }
+
+    document.getElementById("addPromptBtn").addEventListener("click", function() {
+      matchingPrompts.push("");
+      renderMatchingPrompts();
+      renderAnswerKey();
+    });
+
+    document.getElementById("addOptionBtn").addEventListener("click", function() {
+      var key = String.fromCharCode(65 + matchingOptions.length);
+      matchingOptions.push({ key: key, text: "" });
+      renderMatchingOptions();
+      renderAnswerKey();
+    });
+
+    // ========== TRANSLATION TABLE BUILDER ==========
+    function renderTranslationTables() {
+      var container = document.getElementById("translationTablesContainer");
+      container.innerHTML = translationTables.map(function(table, ti) {
+        var rowsHtml = table.rows.map(function(row, ri) {
+          return '<div class="builder-row table-row">' +
+            '<input type="text" placeholder="a." value="' + escapeHtml(row.label) + '" data-tlabel="' + ti + '-' + ri + '" />' +
+            '<input type="text" placeholder="Prompt / phrase" value="' + escapeHtml(row.prompt) + '" data-tprompt="' + ti + '-' + ri + '" />' +
+            '<button class="remove-btn" data-remove-trow="' + ti + '-' + ri + '">✕</button>' +
+          '</div>';
+        }).join("");
+
+        var answersHtml = table.acceptable_answers.map(function(ans, ai) {
+          return '<div class="builder-row" style="grid-template-columns:1fr 40px;margin-bottom:4px;">' +
+            '<input type="text" placeholder="answer1, answer2, ..." value="' + escapeHtml(ans.join(", ")) + '" data-tans="' + ti + '-' + ai + '" />' +
+            '<button class="remove-btn" data-remove-tans="' + ti + '-' + ai + '">✕</button>' +
+          '</div>';
+        }).join("");
+
+        return '<div class="table-builder">' +
+          '<h5>Table ' + (ti + 1) + '</h5>' +
+          '<div class="table-meta">' +
+            '<input type="text" placeholder="Table title" value="' + escapeHtml(table.title) + '" data-ttitle="' + ti + '" />' +
+            '<input type="text" placeholder="Prompt / instructions" value="' + escapeHtml(table.prompt) + '" data-tprompt-main="' + ti + '" />' +
+          '</div>' +
+          '<div style="margin-bottom:8px;"><label style="font-size:0.78rem;">Headers (comma-separated)</label>' +
+          '<input type="text" value="' + escapeHtml(table.headers.join(", ")) + '" data-theaders="' + ti + '" style="margin-top:4px;" /></div>' +
+          '<div style="margin-bottom:8px;"><label style="font-size:0.78rem;">Rows</label></div>' + rowsHtml +
+          '<button class="btn btn-small" data-add-trow="' + ti + '" style="margin-top:6px;">+ Add Row</button>' +
+          '<div style="margin:12px 0 8px;"><label style="font-size:0.78rem;">Acceptable Answers (one row per answer set, comma-separated alternatives)</label></div>' + answersHtml +
+          '<button class="btn btn-small" data-add-tans="' + ti + '" style="margin-top:6px;">+ Add Answer Set</button>' +
+          '<button class="btn btn-small btn-danger" data-remove-table="' + ti + '" style="margin-top:12px;">Remove Table</button>' +
+        '</div>';
+      }).join("");
+
+      // Attach listeners
+      container.querySelectorAll("[data-ttitle]").forEach(function(el) {
+        el.addEventListener("input", function() { translationTables[Number(el.dataset.ttitle)].title = el.value; });
+      });
+      container.querySelectorAll("[data-tprompt-main]").forEach(function(el) {
+        el.addEventListener("input", function() { translationTables[Number(el.dataset.tpromptMain)].prompt = el.value; });
+      });
+      container.querySelectorAll("[data-theaders]").forEach(function(el) {
+        el.addEventListener("input", function() {
+          translationTables[Number(el.dataset.theaders)].headers = el.value.split(",").map(function(s) { return s.trim(); });
+        });
+      });
+      container.querySelectorAll("[data-tlabel]").forEach(function(el) {
+        el.addEventListener("input", function() {
+          var parts = el.dataset.tlabel.split("-");
+          translationTables[Number(parts[0])].rows[Number(parts[1])].label = el.value;
+        });
+      });
+      container.querySelectorAll("[data-tprompt]").forEach(function(el) {
+        el.addEventListener("input", function() {
+          var parts = el.dataset.tprompt.split("-");
+          translationTables[Number(parts[0])].rows[Number(parts[1])].prompt = el.value;
+        });
+      });
+      container.querySelectorAll("[data-tans]").forEach(function(el) {
+        el.addEventListener("input", function() {
+          var parts = el.dataset.tans.split("-");
+          translationTables[Number(parts[0])].acceptable_answers[Number(parts[1])] = el.value.split(",").map(function(s) { return s.trim(); });
+        });
+      });
+      container.querySelectorAll("[data-remove-trow]").forEach(function(btn) {
+        btn.addEventListener("click", function() {
+          var parts = btn.dataset.removeTrow.split("-");
+          translationTables[Number(parts[0])].rows.splice(Number(parts[1]), 1);
+          renderTranslationTables();
+        });
+      });
+      container.querySelectorAll("[data-remove-tans]").forEach(function(btn) {
+        btn.addEventListener("click", function() {
+          var parts = btn.dataset.removeTans.split("-");
+          translationTables[Number(parts[0])].acceptable_answers.splice(Number(parts[1]), 1);
+          renderTranslationTables();
+        });
+      });
+      container.querySelectorAll("[data-add-trow]").forEach(function(btn) {
+        btn.addEventListener("click", function() {
+          var ti = Number(btn.dataset.addTrow);
+          var label = String.fromCharCode(97 + translationTables[ti].rows.length) + ".";
+          translationTables[ti].rows.push({ label: label, prompt: "" });
+          renderTranslationTables();
+        });
+      });
+      container.querySelectorAll("[data-add-tans]").forEach(function(btn) {
+        btn.addEventListener("click", function() {
+          var ti = Number(btn.dataset.addTans);
+          translationTables[ti].acceptable_answers.push([""]);
+          renderTranslationTables();
+        });
+      });
+      container.querySelectorAll("[data-remove-table]").forEach(function(btn) {
+        btn.addEventListener("click", function() {
+          translationTables.splice(Number(btn.dataset.removeTable), 1);
+          renderTranslationTables();
+        });
+      });
+    }
+
+    document.getElementById("addTranslationTableBtn").addEventListener("click", function() {
+      translationTables.push({
+        title: "Task " + (translationTables.length + 1),
+        prompt: "",
+        headers: ["Item", "Phrase", "Your translation"],
+        rows: [{ label: "a.", prompt: "" }],
+        acceptable_answers: [[""]]
+      });
+      renderTranslationTables();
+    });
+
+    // ========== TEXT ANSWER BUILDER ==========
+    var textAnswerInput = document.getElementById("textAnswerInput");
+    var textAnswerTags = document.getElementById("textAnswerTags");
+
+    function renderTextTags() {
+      var existing = textAnswerTags.querySelectorAll(".tag");
+      existing.forEach(function(t) { t.remove(); });
+      textAnswers.forEach(function(ans, i) {
+        var tag = document.createElement("span");
+        tag.className = "tag";
+        tag.innerHTML = escapeHtml(ans) + ' <button data-remove-tag="' + i + '">✕</button>';
+        textAnswerTags.insertBefore(tag, textAnswerInput);
+      });
+      textAnswerTags.querySelectorAll("[data-remove-tag]").forEach(function(btn) {
+        btn.addEventListener("click", function() {
+          textAnswers.splice(Number(btn.dataset.removeTag), 1);
+          renderTextTags();
+        });
+      });
+    }
+
+    textAnswerInput.addEventListener("keydown", function(e) {
+      if (e.key === "Enter" || e.key === ",") {
+        e.preventDefault();
+        var val = textAnswerInput.value.trim();
+        if (val && !textAnswers.includes(val)) {
+          textAnswers.push(val);
+          textAnswerInput.value = "";
+          renderTextTags();
+        }
+      }
+    });
+
+    // ========== DATASET BUILDER ==========
+    function renderDatasets() {
+      var container = document.getElementById("datasetsContainer");
+      container.innerHTML = datasets.map(function(ds, di) {
+        var headersHtml = ds.headers.map(function(h, hi) {
+          return '<div class="builder-row dataset-header-row">' +
+            '<input type="text" placeholder="Header" value="' + escapeHtml(h) + '" data-dh="' + di + '-' + hi + '" />' +
+            '<button class="remove-btn" data-remove-dh="' + di + '-' + hi + '">✕</button>' +
+          '</div>';
+        }).join("");
+        var rowsHtml = ds.rows.map(function(row, ri) {
+          var cells = row.map(function(cell, ci) {
+            return '<input type="text" placeholder="Value" value="' + escapeHtml(cell) + '" data-dcell="' + di + '-' + ri + '-' + ci + '" style="flex:1;" />';
+          }).join("");
+          return '<div class="builder-row dataset-row" style="display:flex;gap:8px;">' + cells +
+            '<button class="remove-btn" data-remove-drow="' + di + '-' + ri + '">✕</button>' +
+          '</div>';
+        }).join("");
+        return '<div class="table-builder">' +
+          '<h5>Dataset ' + (di + 1) + '</h5>' +
+          '<div style="margin-bottom:8px;"><input type="text" placeholder="Dataset label" value="' + escapeHtml(ds.label) + '" data-dlabel="' + di + '" style="width:100%;padding:8px 10px;" /></div>' +
+          '<div style="margin-bottom:6px;"><label style="font-size:0.78rem;">Headers</label></div>' + headersHtml +
+          '<button class="btn btn-small" data-add-dh="' + di + '" style="margin:6px 0 10px;">+ Add Header</button>' +
+          '<div style="margin-bottom:6px;"><label style="font-size:0.78rem;">Rows</label></div>' + rowsHtml +
+          '<button class="btn btn-small" data-add-drow="' + di + '" style="margin-top:6px;">+ Add Row</button>' +
+          '<button class="btn btn-small btn-danger" data-remove-ds="' + di + '" style="margin-top:12px;">Remove Dataset</button>' +
+        '</div>';
+      }).join("");
+
+      container.querySelectorAll("[data-dlabel]").forEach(function(el) {
+        el.addEventListener("input", function() { datasets[Number(el.dataset.dlabel)].label = el.value; });
+      });
+      container.querySelectorAll("[data-dh]").forEach(function(el) {
+        el.addEventListener("input", function() {
+          var parts = el.dataset.dh.split("-");
+          datasets[Number(parts[0])].headers[Number(parts[1])] = el.value;
+        });
+      });
+      container.querySelectorAll("[data-dcell]").forEach(function(el) {
+        el.addEventListener("input", function() {
+          var parts = el.dataset.dcell.split("-");
+          datasets[Number(parts[0])].rows[Number(parts[1])][Number(parts[2])] = el.value;
+        });
+      });
+      container.querySelectorAll("[data-remove-dh]").forEach(function(btn) {
+        btn.addEventListener("click", function() {
+          var parts = btn.dataset.removeDh.split("-");
+          var di = Number(parts[0]);
+          var hi = Number(parts[1]);
+          datasets[di].headers.splice(hi, 1);
+          datasets[di].rows.forEach(function(row) { row.splice(hi, 1); });
+          renderDatasets();
+        });
+      });
+      container.querySelectorAll("[data-remove-drow]").forEach(function(btn) {
+        btn.addEventListener("click", function() {
+          var parts = btn.dataset.removeDrow.split("-");
+          datasets[Number(parts[0])].rows.splice(Number(parts[1]), 1);
+          renderDatasets();
+        });
+      });
+      container.querySelectorAll("[data-add-dh]").forEach(function(btn) {
+        btn.addEventListener("click", function() {
+          var di = Number(btn.dataset.addDh);
+          datasets[di].headers.push("");
+          datasets[di].rows.forEach(function(row) { row.push(""); });
+          renderDatasets();
+        });
+      });
+      container.querySelectorAll("[data-add-drow]").forEach(function(btn) {
+        btn.addEventListener("click", function() {
+          var di = Number(btn.dataset.addDrow);
+          var newRow = new Array(datasets[di].headers.length).fill("");
+          datasets[di].rows.push(newRow);
+          renderDatasets();
+        });
+      });
+      container.querySelectorAll("[data-remove-ds]").forEach(function(btn) {
+        btn.addEventListener("click", function() {
+          datasets.splice(Number(btn.dataset.removeDs), 1);
+          renderDatasets();
+        });
+      });
+    }
+
+    document.getElementById("addDatasetBtn").addEventListener("click", function() {
+      datasets.push({
+        label: "Reference data",
+        headers: ["Column 1", "Column 2"],
+        rows: [["", ""]]
+      });
+      renderDatasets();
+    });
+
+    // ========== AUTH ==========
+    function showAuthError(msg) {
+      authFeedback.textContent = msg;
+      authFeedback.className = "feedback error";
+    }
+    function showAuthSuccess(msg) {
+      authFeedback.textContent = msg;
+      authFeedback.className = "feedback success";
+    }
+    function updateUI(user) {
+      if (user) {
+        authForm.classList.add("hidden");
+        authActions.classList.remove("hidden");
+        mainPanel.classList.remove("hidden");
+        showAuthSuccess("Signed in as " + user.email);
+      } else {
+        authForm.classList.remove("hidden");
+        authActions.classList.add("hidden");
+        mainPanel.classList.add("hidden");
+        authFeedback.textContent = "Not signed in.";
+        authFeedback.className = "feedback";
+      }
+    }
+
+    signInBtn.addEventListener("click", function() {
+      var email = emailInput.value.trim();
+      var password = passwordInput.value;
+      if (!email || !password) { showAuthError("Please enter email and password."); return; }
+      signInBtn.textContent = "Signing in..."; signInBtn.disabled = true;
+      supabase.auth.signInWithPassword({ email: email, password: password })
+        .then(function(result) {
+          signInBtn.textContent = "Sign In"; signInBtn.disabled = false;
+          if (result.error) showAuthError("Error: " + result.error.message);
+          else updateUI(result.data.user);
+        })
+        .catch(function(err) {
+          signInBtn.textContent = "Sign In"; signInBtn.disabled = false;
+          showAuthError("Exception: " + (err && err.message ? err.message : String(err)));
+        });
+    });
+
+    signUpBtn.addEventListener("click", function() {
+      var email = emailInput.value.trim();
+      var password = passwordInput.value;
+      if (!email || !password) { showAuthError("Please enter email and password."); return; }
+      if (password.length < 6) { showAuthError("Password must be at least 6 characters."); return; }
+      signUpBtn.textContent = "Creating..."; signUpBtn.disabled = true;
+      supabase.auth.signUp({ email: email, password: password })
+        .then(function(result) {
+          signUpBtn.textContent = "Create Account"; signUpBtn.disabled = false;
+          if (result.error) showAuthError("Error: " + result.error.message);
+          else showAuthSuccess("Account created! Check your email, then sign in.");
+        })
+        .catch(function(err) {
+          signUpBtn.textContent = "Create Account"; signUpBtn.disabled = false;
+          showAuthError("Exception: " + (err && err.message ? err.message : String(err)));
+        });
+    });
+
+    signOutBtn.addEventListener("click", function() {
+      supabase.auth.signOut().then(function() { updateUI(null); });
+    });
+
+    supabase.auth.getUser().then(function(result) {
+      if (result.data.user) updateUI(result.data.user);
+    });
+
+    supabase.auth.onAuthStateChange(function(event, session) {
+      if (session && session.user) updateUI(session.user);
+      else updateUI(null);
+    });
+
+    // ========== BUILD PAYLOAD ==========
+    function buildPayload() {
+      var mode = pMode.value;
+      var payload = {
+        slug: document.getElementById("pSlug").value.trim(),
+        mode: mode,
+        type: "adapted",
+        title: document.getElementById("pTitle").value.trim(),
+        contest: document.getElementById("pContest").value,
+        label: document.getElementById("pLabel").value.trim() || null,
+        year: parseInt(document.getElementById("pYear").value) || 2025,
+        topic: document.getElementById("pTopic").value,
+        difficulty: parseInt(document.getElementById("pDifficulty").value) || 3,
+        source_name: document.getElementById("pSourceName").value.trim() || null,
+        source_url: document.getElementById("pSourceUrl").value.trim() || null,
+        prompt: document.getElementById("pPrompt").value.trim(),
+        hint: document.getElementById("pHint").value.trim() || null,
+        solution: document.getElementById("pSolution").value.trim() || null,
+        datasets: datasets.filter(function(d) { return d.label || d.rows.some(function(r) { return r.some(function(c) { return c; }); }); })
+      };
+
+      if (mode === "matching") {
+        var answerKey = [];
+        document.querySelectorAll("[data-answer-idx]").forEach(function(sel) {
+          answerKey[Number(sel.dataset.answerIdx)] = sel.value;
+        });
+        payload.answer_key = answerKey;
+        payload.matching = {
+          prompts: matchingPrompts.filter(function(p) { return p; }),
+          options: matchingOptions.filter(function(o) { return o.key; })
+        };
+      } else if (mode === "translation_table") {
+        payload.translation_tables = translationTables.map(function(t) {
+          return {
+            title: t.title,
+            prompt: t.prompt,
+            headers: t.headers,
+            rows: t.rows,
+            acceptable_answers: t.acceptable_answers
+          };
+        });
+      } else if (mode === "text") {
+        payload.acceptable_answers = textAnswers.length ? [textAnswers] : [];
+      } else if (mode === "multi_task") {
+        try { payload.tasks = JSON.parse(document.getElementById("pTasksRaw").value); } catch(e) { payload.tasks = []; }
+      }
+
+      return payload;
+    }
+
+    function validate(payload) {
+      var errors = [];
+      if (!payload.slug) errors.push("Slug is required");
+      if (!payload.title) errors.push("Title is required");
+      if (!payload.prompt) errors.push("Prompt is required");
+
+      if (payload.mode === "matching") {
+        if (!payload.matching.prompts.length) errors.push("Add at least one prompt");
+        if (!payload.matching.options.length) errors.push("Add at least one option");
+        if (payload.answer_key.some(function(k) { return !k; })) errors.push("Set all answer key selections");
+      }
+      if (payload.mode === "translation_table") {
+        if (!payload.translation_tables || !payload.translation_tables.length) errors.push("Add at least one translation table");
+      }
+      if (payload.mode === "text") {
+        if (!payload.acceptable_answers || !payload.acceptable_answers.length || !payload.acceptable_answers[0].length) errors.push("Add at least one acceptable answer");
+      }
+
+      return errors;
+    }
+
+    // ========== ADD / PREVIEW / CLEAR ==========
+    addBtn.addEventListener("click", function() {
+      var payload = buildPayload();
+      var errors = validate(payload);
+      if (errors.length > 0) {
+        addFeedback.textContent = "Errors:\n" + errors.join("\n");
+        addFeedback.className = "feedback error";
+        return;
+      }
+      addBtn.textContent = "Adding..."; addBtn.disabled = true;
+      supabase.from("problems").insert(payload).select()
+        .then(function(result) {
+          addBtn.textContent = "Add Problem"; addBtn.disabled = false;
+          if (result.error) {
+            addFeedback.textContent = "Error: " + result.error.message;
+            addFeedback.className = "feedback error";
+          } else {
+            addFeedback.textContent = "Success! Added: " + payload.title;
+            addFeedback.className = "feedback success";
+            localStorage.removeItem("problems-cache");
+            localStorage.removeItem("problems-cache-time");
+          }
+        })
+        .catch(function(err) {
+          addBtn.textContent = "Add Problem"; addBtn.disabled = false;
+          addFeedback.textContent = "Exception: " + (err && err.message ? err.message : String(err));
+          addFeedback.className = "feedback error";
+        });
+    });
+
+    previewBtn.addEventListener("click", function() {
+      var payload = buildPayload();
+      jsonPreview.textContent = JSON.stringify(payload, null, 2);
+      jsonPreview.classList.remove("hidden");
+      addFeedback.textContent = "JSON preview shown below.";
+      addFeedback.className = "feedback info";
+    });
+
+    clearBtn.addEventListener("click", function() {
+      document.querySelectorAll("input[type=text], input[type=email], input[type=password], input[type=url], input[type=number], textarea").forEach(function(el) { el.value = ""; });
+      document.getElementById("pMode").value = "matching";
+      document.getElementById("pContest").value = "OzCLO";
+      document.getElementById("pTopic").value = "Syntax";
+      document.getElementById("pDifficulty").value = "3";
+      document.getElementById("pYear").value = "2025";
+      matchingPrompts = []; matchingOptions = []; translationTables = []; textAnswers = []; datasets = [];
+      renderMatchingPrompts(); renderMatchingOptions(); renderAnswerKey();
+      renderTranslationTables(); renderTextTags(); renderDatasets();
+      updateModeFields();
+      jsonPreview.classList.add("hidden");
+      addFeedback.textContent = "Form cleared.";
+      addFeedback.className = "feedback";
+    });
+
+    // ========== LIST / DELETE ==========
+    function loadList() {
+      listContainer.innerHTML = '<div class="feedback">Loading...</div>';
+      supabase.from("problems").select("id, slug, title, contest, topic, year, difficulty, mode").order("created_at", { ascending: false })
+        .then(function(result) {
+          if (result.error) {
+            listContainer.innerHTML = '<div class="feedback error">Error: ' + result.error.message + "</div>";
+            return;
+          }
+          if (!result.data.length) {
+            listContainer.innerHTML = '<div class="feedback">No problems found.</div>';
+            return;
+          }
+          listContainer.innerHTML = result.data.map(function(p) {
+            return '<div class="problem-item">' +
+              '<div><strong>' + escapeHtml(p.title) + '</strong><span>' + escapeHtml(p.contest) + ' &middot; ' + escapeHtml(p.topic) + ' &middot; ' + p.year + ' &middot; Diff ' + p.difficulty + ' &middot; ' + escapeHtml(p.mode) + '</span></div>' +
+              '<button class="btn del-btn" data-slug="' + escapeHtml(p.slug) + '" style="padding:6px 12px;font-size:0.8rem;">Delete</button>' +
+            '</div>';
+          }).join("");
+          document.querySelectorAll(".del-btn").forEach(function(btn) {
+            btn.addEventListener("click", function() {
+              var slug = btn.getAttribute("data-slug");
+              if (!confirm("Delete " + slug + "?")) return;
+              supabase.from("problems").delete().eq("slug", slug)
+                .then(function() {
+                  btn.closest(".problem-item").remove();
+                  localStorage.removeItem("problems-cache");
+                  localStorage.removeItem("problems-cache-time");
+                });
+            });
+          });
+        });
+    }
+
+    refreshBtn.addEventListener("click", loadList);
+
+    deleteAllBtn.addEventListener("click", function() {
+      if (!confirm("Delete ALL problems?")) return;
+      if (!confirm("Really? This cannot be undone.")) return;
+      supabase.from("problems").delete().neq("id", "00000000-0000-0000-0000-000000000000")
+        .then(function() {
+          listContainer.innerHTML = '<div class="feedback success">All problems deleted.</div>';
+          localStorage.removeItem("problems-cache");
+          localStorage.removeItem("problems-cache-time");
+        });
+    });
+
+    // ========== CACHE ==========
+    clearCacheBtn.addEventListener("click", function() {
+      localStorage.removeItem("problems-cache");
+      localStorage.removeItem("problems-cache-time");
+      cacheFeedback.textContent = "Problem cache cleared.";
+      cacheFeedback.className = "feedback success";
+    });
+
+    clearAllBtn.addEventListener("click", function() {
+      if (confirm("Clear ALL localStorage?")) {
+        localStorage.clear();
+        cacheFeedback.textContent = "All localStorage cleared.";
+        cacheFeedback.className = "feedback success";
+      }
+    });
+
+    // ========== UTILS ==========
+    function escapeHtml(text) {
+      if (text == null) return "";
+      return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    // Init builders
+    updateModeFields();
+    renderMatchingPrompts();
+    renderMatchingOptions();
+    renderAnswerKey();
+    renderTranslationTables();
+    renderTextTags();
+    renderDatasets();
+
+    console.log("[ADMIN] Script fully loaded");
+  </script>
+</body>
+</html>

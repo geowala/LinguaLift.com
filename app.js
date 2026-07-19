@@ -260,6 +260,16 @@ const signUpBtn = document.querySelector("#signUpBtn");
 const signInBtn = document.querySelector("#signInBtn");
 const signOutBtn = document.querySelector("#signOutBtn");
 const authStatus = document.querySelector("#authStatus");
+const authFormView = document.querySelector("#authFormView");
+const authProfileView = document.querySelector("#authProfileView");
+const profileName = document.querySelector("#profileName");
+const profileEmail = document.querySelector("#profileEmail");
+const syncBadge = document.querySelector("#syncBadge");
+const cloudAttempts = document.querySelector("#cloudAttempts");
+const cloudAccuracy = document.querySelector("#cloudAccuracy");
+const activityCard = document.querySelector("#activityCard");
+const activityList = document.querySelector("#activityList");
+const activityCount = document.querySelector("#activityCount");
 const problemScore = document.querySelector("#problemScore");
 const contestFilter = document.querySelector("#contestFilter");
 const topicFilter = document.querySelector("#topicFilter");
@@ -912,6 +922,8 @@ function handleCheckAnswer() {
     renderLeaderboards();
     renderProblemList();
     saveAttemptToCloud(state.attempts[0]);
+    renderUserProfile(state.attempts);
+    renderRecentActivity(state.attempts);
 
     return;
   }
@@ -1006,6 +1018,8 @@ function handleCheckAnswer() {
   renderLeaderboards();
   renderProblemList();
   saveAttemptToCloud(state.attempts[0]);
+  renderUserProfile(state.attempts);
+  renderRecentActivity(state.attempts);
 }
 
 function checkTranslationTable(problem) {
@@ -1408,6 +1422,7 @@ function attachEvents() {
       renderDashboard();
       renderReview();
       renderProblemList();
+      updateAuthUI();
     } catch (error) {
       authStatus.textContent = error.message;
     }
@@ -1450,9 +1465,19 @@ async function getCurrentUser() {
 async function updateAuthUI() {
   try {
     const user = await getCurrentUser();
-    authStatus.textContent = user
-      ? `Signed in as ${user.email}`
-      : "Not signed in.";
+    if (user) {
+      authFormView.classList.add("hidden");
+      authProfileView.classList.remove("hidden");
+      profileName.textContent = user.email.split("@")[0];
+      profileEmail.textContent = user.email;
+      syncBadge.textContent = "Cloud synced";
+      authStatus.textContent = "";
+    } else {
+      authFormView.classList.remove("hidden");
+      authProfileView.classList.add("hidden");
+      activityCard.classList.add("hidden");
+      authStatus.textContent = "Not signed in.";
+    }
   } catch (error) {
     authStatus.textContent = "Auth status unavailable.";
   }
@@ -1462,27 +1487,102 @@ async function loadUserData() {
   const user = await getCurrentUser();
   if (!user) return;
 
-  const [{ data: bookmarks }, { data: reviewQueue }] = await Promise.all([
-    supabaseClient
-      .from("bookmarks")
-      .select("problem_id")
-      .eq("user_id", user.id),
-    supabaseClient
-      .from("review_queue")
-      .select("problem_id")
-      .eq("user_id", user.id)
+  const [{ data: bookmarks }, { data: reviewQueue }, { data: attempts }] = await Promise.all([
+    supabaseClient.from("bookmarks").select("problem_id").eq("user_id", user.id),
+    supabaseClient.from("review_queue").select("problem_id").eq("user_id", user.id),
+    supabaseClient.from("attempts").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(50)
   ]);
 
   state.bookmarks = (bookmarks || []).map(row => row.problem_id);
   state.reviewQueue = (reviewQueue || []).map(row => row.problem_id);
 
+  // Merge cloud attempts into local state (cloud wins for duplicates)
+  const cloudAttempts = (attempts || []).map(row => ({
+    id: row.id,
+    problemId: row.problem_id,
+    correct: row.correct,
+    answer: row.answer,
+    score: row.score,
+    total: row.total,
+    timestamp: new Date(row.created_at).getTime(),
+    source: "cloud"
+  }));
+
+  // Deduplicate by problemId + timestamp (rough)
+  const existingKeys = new Set(state.attempts.map(a => a.problemId + "-" + Math.floor(a.timestamp / 1000)));
+  cloudAttempts.forEach(function(ca) {
+    var key = ca.problemId + "-" + Math.floor(ca.timestamp / 1000);
+    if (!existingKeys.has(key)) {
+      state.attempts.push(ca);
+      existingKeys.add(key);
+    }
+  });
+
+  state.attempts.sort(function(a, b) { return b.timestamp - a.timestamp; });
+
   persistState();
   renderDashboard();
   renderReview();
+  renderUserProfile(cloudAttempts);
+  renderRecentActivity(cloudAttempts);
 
   if (currentProblem) {
     bookmarkButton.textContent = state.bookmarks.includes(currentProblem.id) ? "★" : "☆";
   }
+}
+
+function renderUserProfile(attemptsData) {
+  if (!attemptsData) return;
+  var total = attemptsData.length;
+  var correct = attemptsData.filter(function(a) { return a.correct; }).length;
+  var accuracy = total ? Math.round((correct / total) * 100) : 0;
+  cloudAttempts.textContent = String(total);
+  cloudAccuracy.textContent = accuracy + "%";
+}
+
+function renderRecentActivity(cloudAttempts) {
+  if (!cloudAttempts || !cloudAttempts.length) {
+    activityCard.classList.add("hidden");
+    return;
+  }
+  activityCard.classList.remove("hidden");
+  var recent = cloudAttempts.slice(0, 8);
+  activityCount.textContent = recent.length + " recent";
+
+  activityList.innerHTML = recent.map(function(a) {
+    var problem = problems.find(function(p) { return p.id === a.problemId; });
+    var title = problem ? problem.title : a.problemId;
+    var timeStr = formatRelativeTime(a.timestamp);
+    var status = a.correct ? "✓" : "✗";
+    var statusClass = a.correct ? "success" : "error";
+    return '<article class="history-item" style="border-left:3px solid ' + (a.correct ? "#8fd1a8" : "#d5988a") + ';">' +
+      '<strong>' + escapeHtml(title) + '</strong>' +
+      '<p>' + status + ' ' + (a.score !== null ? a.score + "/" + a.total : "") + ' · ' + timeStr + '</p>' +
+    '</article>';
+  }).join("");
+}
+
+function formatRelativeTime(ts) {
+  var diff = Date.now() - ts;
+  var seconds = Math.floor(diff / 1000);
+  var minutes = Math.floor(seconds / 60);
+  var hours = Math.floor(minutes / 60);
+  var days = Math.floor(hours / 24);
+  if (seconds < 60) return "just now";
+  if (minutes < 60) return minutes + "m ago";
+  if (hours < 24) return hours + "h ago";
+  if (days < 7) return days + "d ago";
+  return new Date(ts).toLocaleDateString();
+}
+
+function escapeHtml(text) {
+  if (text == null) return "";
+  return String(text)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 // ============================================

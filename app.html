@@ -45,23 +45,52 @@
         </nav>
     
         <section class="sidebar-panel" id="authCard">
-          <div class="panel-head">
-            <div>
-              <p class="eyebrow">Account</p>
-              <h2>Sign in</h2>
+          <div id="authFormView">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Account</p>
+                <h2>Sign in</h2>
+              </div>
+            </div>
+            <div class="auth-grid">
+              <input id="emailInput" type="email" placeholder="Email" />
+              <input id="passwordInput" type="password" placeholder="Password" />
+              <div class="button-row compact">
+                <button class="primary-button" id="signUpBtn" type="button">Sign up</button>
+                <button class="ghost-button" id="signInBtn" type="button">Log in</button>
+              </div>
+              <div class="feedback-card muted" id="authStatus">Not signed in.</div>
             </div>
           </div>
-    
-          <div class="auth-grid">
-            <input id="emailInput" type="email" placeholder="Email" />
-            <input id="passwordInput" type="password" placeholder="Password" />
+
+          <div id="authProfileView" class="hidden">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Account</p>
+                <h2 id="profileName">You</h2>
+              </div>
+              <span class="badge" id="syncBadge">Cloud</span>
+            </div>
+            <p style="color:#aea391;font-size:0.85rem;margin-bottom:12px;" id="profileEmail">Not signed in</p>
+            <div class="stats-grid" style="grid-template-columns:1fr 1fr;margin-bottom:12px;">
+              <article style="padding:10px;"><span id="cloudAttempts">0</span><p style="font-size:0.75rem;">Attempts</p></article>
+              <article style="padding:10px;"><span id="cloudAccuracy">0%</span><p style="font-size:0.75rem;">Accuracy</p></article>
+            </div>
             <div class="button-row compact">
-              <button class="primary-button" id="signUpBtn" type="button">Sign up</button>
-              <button class="ghost-button" id="signInBtn" type="button">Log in</button>
               <button class="ghost-button" id="signOutBtn" type="button">Log out</button>
             </div>
-            <div class="feedback-card muted" id="authStatus">Not signed in.</div>
           </div>
+        </section>
+
+        <section class="sidebar-panel hidden" id="activityCard">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Activity</p>
+              <h2>Recent</h2>
+            </div>
+            <span class="panel-meta" id="activityCount">0 tries</span>
+          </div>
+          <div id="activityList" class="history-list"></div>
         </section>
     
         <section class="sidebar-panel">

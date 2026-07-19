@@ -15,7 +15,7 @@
       padding: 2rem;
       line-height: 1.6;
     }
-    .container { max-width: 960px; margin: 0 auto; }
+    .container { max-width: 1100px; margin: 0 auto; }
     h1 { font-size: 2rem; margin-bottom: 0.5rem; }
     .subtitle { color: #aea391; font-size: 0.85rem; margin-bottom: 2rem; }
     .card {
@@ -56,13 +56,17 @@
       font-size: 0.9rem;
       margin-right: 8px;
       margin-bottom: 8px;
+      transition: all 0.15s ease;
     }
+    .btn:hover { border-color: #555; background: #1a1a1a; }
     .btn-primary {
       background: #f1e6bc;
       color: #111;
       border: none;
     }
+    .btn-primary:hover { background: #fff5d1; }
     .btn-danger { color: #d5988a; border-color: #d5988a; }
+    .btn-danger:hover { background: rgba(213,152,138,0.1); }
     .btn-small { padding: 6px 12px; font-size: 0.8rem; }
     .feedback {
       padding: 12px;
@@ -71,30 +75,87 @@
       margin-top: 12px;
       font-size: 0.85rem;
       white-space: pre-wrap;
+      transition: opacity 0.3s ease;
     }
-    .feedback.success { color: #8fd1a8; border-color: rgba(143,209,168,0.3); }
-    .feedback.error { color: #d5988a; border-color: rgba(213,152,138,0.3); }
-    .feedback.info { color: #a8c5ea; border-color: rgba(168,197,234,0.3); }
+    .feedback.success { color: #8fd1a8; border-color: rgba(143,209,168,0.3); background: rgba(143,209,168,0.05); }
+    .feedback.error { color: #d5988a; border-color: rgba(213,152,138,0.3); background: rgba(213,152,138,0.05); }
+    .feedback.info { color: #a8c5ea; border-color: rgba(168,197,234,0.3); background: rgba(168,197,234,0.05); }
     .hidden { display: none !important; }
     .tabs { display: flex; gap: 8px; margin-bottom: 24px; border-bottom: 1px solid #2c2c2c; padding-bottom: 12px; }
-    .tab-btn { background: transparent; color: #aea391; border: none; padding: 8px 16px; cursor: pointer; }
+    .tab-btn { background: transparent; color: #aea391; border: none; padding: 8px 16px; cursor: pointer; font: inherit; font-size: 0.9rem; }
     .tab-btn.active { color: #f1e6bc; border-bottom: 2px solid #f1e6bc; }
+
+    /* Dashboard */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: #0f0f0f;
+      border: 1px solid #2c2c2c;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+    }
+    .stat-card .number {
+      font-size: 2.4rem;
+      font-weight: 600;
+      color: #f1e6bc;
+      display: block;
+    }
+    .stat-card .label {
+      color: #aea391;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .breakdown-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .breakdown-card {
+      background: #0f0f0f;
+      border: 1px solid #2c2c2c;
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .breakdown-card h4 {
+      margin: 0 0 12px 0;
+      font-size: 0.9rem;
+      color: #f2ede4;
+    }
+    .breakdown-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px solid #1a1a1a;
+      font-size: 0.85rem;
+    }
+    .breakdown-row:last-child { border-bottom: none; }
+    .breakdown-row span:first-child { color: #aea391; }
+    .breakdown-row span:last-child { color: #f1e6bc; font-weight: 500; }
+
+    /* Problem list */
     .problem-item {
       border: 1px solid #2c2c2c;
       background: #121212;
       border-radius: 8px;
-      padding: 12px;
+      padding: 14px;
       margin-bottom: 8px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      transition: border-color 0.15s ease;
     }
-    .problem-item strong { display: block; }
-    .problem-item span { color: #aea391; font-size: 0.8rem; }
-    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    @media (max-width: 600px) { .two-col { grid-template-columns: 1fr; } body { padding: 1rem; } }
+    .problem-item:hover { border-color: #3a3a3a; }
+    .problem-item strong { display: block; font-size: 0.95rem; }
+    .problem-item span { color: #aea391; font-size: 0.78rem; }
+    .problem-actions { display: flex; gap: 6px; }
 
-    /* Builder styles */
+    /* Builder */
     .builder-section {
       border: 1px solid #2c2c2c;
       border-radius: 12px;
@@ -116,8 +177,6 @@
     .builder-row.matching-row { grid-template-columns: 40px 1fr 100px 40px; }
     .builder-row.option-row { grid-template-columns: 50px 1fr 40px; }
     .builder-row.table-row { grid-template-columns: 50px 1fr 1fr 40px; }
-    .builder-row.dataset-row { grid-template-columns: 1fr 40px; }
-    .builder-row.dataset-header-row { grid-template-columns: 1fr 40px; }
     .builder-row input {
       padding: 8px 10px;
       font-size: 0.9rem;
@@ -144,16 +203,9 @@
       gap: 8px;
       margin-top: 8px;
     }
-    .answer-select {
-      display: grid;
-      gap: 4px;
-    }
-    .answer-select label {
-      font-size: 0.78rem;
-    }
-    .answer-select select {
-      padding: 8px;
-    }
+    .answer-select { display: grid; gap: 4px; }
+    .answer-select label { font-size: 0.78rem; }
+    .answer-select select { padding: 8px; }
     .table-builder {
       border: 1px solid #2c2c2c;
       border-radius: 10px;
@@ -224,6 +276,37 @@
       font-size: 0.75rem;
       padding: 0;
     }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 600px) { .two-col { grid-template-columns: 1fr; } body { padding: 1rem; } }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      padding: 14px 20px;
+      border-radius: 10px;
+      border: 1px solid #2c2c2c;
+      background: #141414;
+      color: #f2ede4;
+      font-size: 0.9rem;
+      z-index: 9999;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      max-width: 360px;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.success { border-color: rgba(143,209,168,0.4); color: #8fd1a8; }
+    .toast.error { border-color: rgba(213,152,138,0.4); color: #d5988a; }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #aea391;
+    }
+    .empty-state p { margin: 8px 0 0; font-size: 0.9rem; }
   </style>
 </head>
 <body>
@@ -231,18 +314,11 @@
     <h1>LinguaLift Admin</h1>
     <p class="subtitle">Manage problems for the training platform</p>
 
-    <!-- Auth -->
     <div class="card" id="authCard">
       <label style="font-size:1rem;color:#f2ede4;margin-bottom:12px;display:block;">Authentication</label>
       <div id="authForm">
-        <div class="form-group">
-          <label>Email</label>
-          <input type="email" id="email" placeholder="you@example.com" />
-        </div>
-        <div class="form-group">
-          <label>Password</label>
-          <input type="password" id="password" placeholder="Password" />
-        </div>
+        <div class="form-group"><label>Email</label><input type="email" id="email" placeholder="you@example.com" /></div>
+        <div class="form-group"><label>Password</label><input type="password" id="password" placeholder="Password" /></div>
         <button class="btn btn-primary" id="signInBtn">Sign In</button>
         <button class="btn" id="signUpBtn">Create Account</button>
       </div>
@@ -252,16 +328,32 @@
       <div class="feedback" id="authFeedback">Not signed in.</div>
     </div>
 
-    <!-- Main Panel -->
     <div id="mainPanel" class="hidden">
       <div class="tabs">
-        <button class="tab-btn active" data-tab="add">Add Problem</button>
+        <button class="tab-btn active" data-tab="dashboard">Dashboard</button>
+        <button class="tab-btn" data-tab="add">Add Problem</button>
         <button class="tab-btn" data-tab="list">View All</button>
         <button class="tab-btn" data-tab="cache">Cache</button>
       </div>
 
-      <!-- Add Tab -->
-      <div id="tab-add" class="tab-content">
+      <!-- Dashboard -->
+      <div id="tab-dashboard" class="tab-content">
+        <div class="stats-grid" id="statsGrid">
+          <div class="stat-card"><span class="number" id="statTotal">-</span><span class="label">Total Problems</span></div>
+          <div class="stat-card"><span class="number" id="statMatching">-</span><span class="label">Matching</span></div>
+          <div class="stat-card"><span class="number" id="statTranslation">-</span><span class="label">Translation</span></div>
+          <div class="stat-card"><span class="number" id="statText">-</span><span class="label">Text</span></div>
+        </div>
+        <div class="breakdown-grid">
+          <div class="breakdown-card"><h4>By Topic</h4><div id="topicBreakdown"></div></div>
+          <div class="breakdown-card"><h4>By Difficulty</h4><div id="difficultyBreakdown"></div></div>
+          <div class="breakdown-card"><h4>By Contest</h4><div id="contestBreakdown"></div></div>
+          <div class="breakdown-card"><h4>Recent Additions</h4><div id="recentBreakdown"></div></div>
+        </div>
+      </div>
+
+      <!-- Add Problem -->
+      <div id="tab-add" class="tab-content hidden">
         <div class="card">
           <label style="font-size:1rem;color:#f2ede4;margin-bottom:12px;display:block;">Add New Problem</label>
 
@@ -290,11 +382,7 @@
             <div class="form-group">
               <label>Contest *</label>
               <select id="pContest">
-                <option>OzCLO</option>
-                <option>NACLO</option>
-                <option>IOL</option>
-                <option>UKLO</option>
-                <option>Other</option>
+                <option>OzCLO</option><option>NACLO</option><option>IOL</option><option>UKLO</option><option>Other</option>
               </select>
             </div>
             <div class="form-group">
@@ -307,13 +395,7 @@
             <div class="form-group">
               <label>Topic *</label>
               <select id="pTopic">
-                <option>Syntax</option>
-                <option>Morphology</option>
-                <option>Phonology</option>
-                <option>Grammar</option>
-                <option>Translation</option>
-                <option>Writing systems</option>
-                <option>Numeral systems</option>
+                <option>Syntax</option><option>Morphology</option><option>Phonology</option><option>Grammar</option><option>Translation</option><option>Writing systems</option><option>Numeral systems</option>
               </select>
             </div>
             <div class="form-group">
@@ -353,22 +435,18 @@
             <textarea id="pSolution" placeholder="Full worked solution..."></textarea>
           </div>
 
-          <!-- MODE BUILDERS -->
-
           <!-- Matching Builder -->
           <div id="builderMatching">
             <div class="builder-section">
-              <h4>Prompt Items (what the student matches)</h4>
+              <h4>Prompt Items</h4>
               <div id="matchingPromptsList"></div>
               <button class="btn btn-small" id="addPromptBtn">+ Add Prompt</button>
             </div>
-
             <div class="builder-section">
-              <h4>Options (answers to choose from)</h4>
+              <h4>Options</h4>
               <div id="matchingOptionsList"></div>
               <button class="btn btn-small" id="addOptionBtn">+ Add Option</button>
             </div>
-
             <div class="builder-section">
               <h4>Answer Key</h4>
               <p style="color:#aea391;font-size:0.8rem;margin-bottom:8px;">Select the correct option for each prompt.</p>
@@ -376,33 +454,33 @@
             </div>
           </div>
 
-          <!-- Translation Table Builder -->
+          <!-- Translation Builder -->
           <div id="builderTranslation" class="hidden">
             <div id="translationTablesContainer"></div>
             <button class="btn btn-small" id="addTranslationTableBtn">+ Add Translation Table</button>
           </div>
 
-          <!-- Text Answer Builder -->
+          <!-- Text Builder -->
           <div id="builderText" class="hidden">
             <div class="builder-section">
               <h4>Acceptable Answers</h4>
-              <p style="color:#aea391;font-size:0.8rem;margin-bottom:8px;">Enter each acceptable answer. Press Enter or comma to add. Case-insensitive.</p>
+              <p style="color:#aea391;font-size:0.8rem;margin-bottom:8px;">Press Enter or comma to add. Case-insensitive.</p>
               <div class="tag-input" id="textAnswerTags">
                 <input type="text" id="textAnswerInput" placeholder="Type answer and press Enter..." />
               </div>
             </div>
           </div>
 
-          <!-- Multi-Task Builder -->
+          <!-- Multi-Task -->
           <div id="builderMultiTask" class="hidden">
-            <p style="color:#aea391;font-size:0.85rem;">Multi-task problems are complex. For now, use the JSON field below or build as a matching/translation problem first.</p>
+            <p style="color:#aea391;font-size:0.85rem;">Multi-task problems are complex. Use JSON for now.</p>
             <div class="form-group">
               <label>Tasks (JSON)</label>
-              <textarea class="json-field" id="pTasksRaw" style="min-height:120px;font-family:monospace;font-size:0.8rem;">[]</textarea>
+              <textarea id="pTasksRaw" style="min-height:120px;font-family:monospace;font-size:0.8rem;background:#141414;border:1px solid #3a3a3a;border-radius:8px;padding:10px;color:#f2ede4;width:100%;">[]</textarea>
             </div>
           </div>
 
-          <!-- Datasets Builder -->
+          <!-- Datasets -->
           <div class="builder-section">
             <h4>Reference Datasets</h4>
             <p style="color:#aea391;font-size:0.8rem;margin-bottom:8px;">Optional data tables shown to the student.</p>
@@ -410,26 +488,32 @@
             <button class="btn btn-small" id="addDatasetBtn">+ Add Dataset</button>
           </div>
 
-          <button class="btn btn-primary" id="addBtn">Add Problem</button>
-          <button class="btn" id="previewBtn">Preview JSON</button>
-          <button class="btn" id="clearBtn">Clear</button>
+          <div style="margin-top:20px;">
+            <button class="btn btn-primary" id="addBtn">Add Problem</button>
+            <button class="btn" id="previewBtn">Preview JSON</button>
+            <button class="btn" id="clearBtn">Clear</button>
+          </div>
 
           <div class="feedback" id="addFeedback">Fill in required fields and click Add Problem.</div>
           <div class="preview-box hidden" id="jsonPreview"></div>
         </div>
       </div>
 
-      <!-- List Tab -->
+      <!-- List -->
       <div id="tab-list" class="tab-content hidden">
         <div class="card">
-          <label style="font-size:1rem;color:#f2ede4;margin-bottom:12px;display:block;">All Problems</label>
-          <button class="btn" id="refreshBtn">Refresh List</button>
-          <button class="btn btn-danger" id="deleteAllBtn">Delete All</button>
-          <div id="listContainer" style="margin-top:16px;"></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+            <label style="font-size:1rem;color:#f2ede4;display:block;">All Problems</label>
+            <div>
+              <button class="btn btn-small" id="refreshBtn">Refresh List</button>
+              <button class="btn btn-small btn-danger" id="deleteAllBtn">Delete All</button>
+            </div>
+          </div>
+          <div id="listContainer"></div>
         </div>
       </div>
 
-      <!-- Cache Tab -->
+      <!-- Cache -->
       <div id="tab-cache" class="tab-content hidden">
         <div class="card">
           <label style="font-size:1rem;color:#f2ede4;margin-bottom:12px;display:block;">Cache Control</label>
@@ -442,18 +526,15 @@
     </div>
   </div>
 
+  <div class="toast" id="toast"></div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    // Config
+
     var SUPABASE_URL = "https://mlvehqegewrhjabbhixo.supabase.co";
     var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1sdmVocWVnZXdyaGphYmJoaXhvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ0MDI3MDksImV4cCI6MjA5OTk3ODcwOX0.LdXCT3i5NosUpClmP2gtZBgJOtltPlTKl3N9HR9wu-A";
-
-    console.log("[ADMIN] Script starting...");
-
     var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // DOM refs
-    var authCard = document.getElementById("authCard");
     var authForm = document.getElementById("authForm");
     var authActions = document.getElementById("authActions");
     var authFeedback = document.getElementById("authFeedback");
@@ -475,15 +556,16 @@
     var clearAllBtn = document.getElementById("clearAllBtn");
     var cacheFeedback = document.getElementById("cacheFeedback");
     var jsonPreview = document.getElementById("jsonPreview");
+    var toast = document.getElementById("toast");
 
-    // Builder state
     var matchingPrompts = [];
     var matchingOptions = [];
     var translationTables = [];
     var textAnswers = [];
     var datasets = [];
+    var allProblems = [];
 
-    // Tab switching
+    // Tabs
     document.querySelectorAll(".tab-btn").forEach(function(btn) {
       btn.addEventListener("click", function() {
         document.querySelectorAll(".tab-btn").forEach(function(b) { b.classList.remove("active"); });
@@ -495,7 +577,6 @@
       });
     });
 
-    // Mode builder toggling
     function updateModeFields() {
       var mode = pMode.value;
       document.getElementById("builderMatching").classList.toggle("hidden", mode !== "matching");
@@ -505,16 +586,68 @@
     }
     pMode.addEventListener("change", updateModeFields);
 
-    // ========== MATCHING BUILDER ==========
+    // Toast
+    function showToast(msg, type) {
+      toast.textContent = msg;
+      toast.className = "toast " + (type || "");
+      setTimeout(function() { toast.classList.add("show"); }, 10);
+      setTimeout(function() { toast.classList.remove("show"); }, 3000);
+    }
+
+    // Dashboard
+    function renderDashboard(data) {
+      allProblems = data || [];
+      document.getElementById("statTotal").textContent = allProblems.length;
+      document.getElementById("statMatching").textContent = allProblems.filter(function(p) { return p.mode === "matching"; }).length;
+      document.getElementById("statTranslation").textContent = allProblems.filter(function(p) { return p.mode === "translation_table"; }).length;
+      document.getElementById("statText").textContent = allProblems.filter(function(p) { return p.mode === "text"; }).length;
+
+      var topics = {}, diffs = {}, contests = {};
+      allProblems.forEach(function(p) {
+        topics[p.topic] = (topics[p.topic] || 0) + 1;
+        diffs[p.difficulty] = (diffs[p.difficulty] || 0) + 1;
+        contests[p.contest] = (contests[p.contest] || 0) + 1;
+      });
+
+      function renderBreakdown(containerId, obj, sortByValue) {
+        var container = document.getElementById(containerId);
+        var entries = Object.entries(obj);
+        if (sortByValue) entries.sort(function(a, b) { return b[1] - a[1]; });
+        if (!entries.length) { container.innerHTML = '<div class="empty-state"><p>No data yet</p></div>'; return; }
+        container.innerHTML = entries.map(function(e) {
+          return '<div class="breakdown-row"><span>' + escapeHtml(e[0]) + '</span><span>' + e[1] + '</span></div>';
+        }).join("");
+      }
+
+      renderBreakdown("topicBreakdown", topics, true);
+      renderBreakdown("difficultyBreakdown", diffs, false);
+      renderBreakdown("contestBreakdown", contests, true);
+
+      var recent = allProblems.slice().sort(function(a, b) { return new Date(b.created_at) - new Date(a.created_at); }).slice(0, 5);
+      var recentContainer = document.getElementById("recentBreakdown");
+      if (!recent.length) { recentContainer.innerHTML = '<div class="empty-state"><p>No problems added yet</p></div>'; }
+      else {
+        recentContainer.innerHTML = recent.map(function(p) {
+          return '<div class="breakdown-row"><span>' + escapeHtml(p.title) + '</span><span>' + escapeHtml(p.mode) + '</span></div>';
+        }).join("");
+      }
+    }
+
+    function loadDashboard() {
+      supabase.from("problems").select("*").order("created_at", { ascending: false })
+        .then(function(result) {
+          if (!result.error) renderDashboard(result.data);
+        });
+    }
+
+    // Matching Builder
     function renderMatchingPrompts() {
       var container = document.getElementById("matchingPromptsList");
       container.innerHTML = matchingPrompts.map(function(p, i) {
         return '<div class="builder-row matching-row">' +
           '<span class="row-label">' + (i + 1) + '.</span>' +
           '<input type="text" placeholder="Prompt text..." value="' + escapeHtml(p) + '" data-prompt-idx="' + i + '" />' +
-          '<span></span>' +
-          '<button class="remove-btn" data-remove-prompt="' + i + '">✕</button>' +
-        '</div>';
+          '<span></span><button class="remove-btn" data-remove-prompt="' + i + '">&#10005;</button></div>';
       }).join("");
       container.querySelectorAll("[data-prompt-idx]").forEach(function(input) {
         input.addEventListener("input", function() {
@@ -525,8 +658,7 @@
       container.querySelectorAll("[data-remove-prompt]").forEach(function(btn) {
         btn.addEventListener("click", function() {
           matchingPrompts.splice(Number(btn.dataset.removePrompt), 1);
-          renderMatchingPrompts();
-          renderAnswerKey();
+          renderMatchingPrompts(); renderAnswerKey();
         });
       });
     }
@@ -537,8 +669,7 @@
         return '<div class="builder-row option-row">' +
           '<input type="text" placeholder="A" maxlength="3" style="text-align:center;" value="' + escapeHtml(o.key) + '" data-option-key="' + i + '" />' +
           '<input type="text" placeholder="Option text..." value="' + escapeHtml(o.text) + '" data-option-text="' + i + '" />' +
-          '<button class="remove-btn" data-remove-option="' + i + '">✕</button>' +
-        '</div>';
+          '<button class="remove-btn" data-remove-option="' + i + '">&#10005;</button></div>';
       }).join("");
       container.querySelectorAll("[data-option-key]").forEach(function(input) {
         input.addEventListener("input", function() {
@@ -554,8 +685,7 @@
       container.querySelectorAll("[data-remove-option]").forEach(function(btn) {
         btn.addEventListener("click", function() {
           matchingOptions.splice(Number(btn.dataset.removeOption), 1);
-          renderMatchingOptions();
-          renderAnswerKey();
+          renderMatchingOptions(); renderAnswerKey();
         });
       });
     }
@@ -568,29 +698,21 @@
       }
       grid.innerHTML = matchingPrompts.map(function(_, i) {
         var opts = '<option value="">-</option>' + matchingOptions.map(function(o) {
-          return '<option value="' + escapeHtml(o.key) + '">' + escapeHtml(o.key) + " — " + escapeHtml(o.text).substring(0, 30) + "</option>";
+          return '<option value="' + escapeHtml(o.key) + '">' + escapeHtml(o.key) + " &mdash; " + escapeHtml(o.text).substring(0, 30) + "</option>";
         }).join("");
-        return '<div class="answer-select">' +
-          '<label>Item ' + (i + 1) + '</label>' +
-          '<select data-answer-idx="' + i + '">' + opts + '</select>' +
-        '</div>';
+        return '<div class="answer-select"><label>Item ' + (i + 1) + '</label><select data-answer-idx="' + i + '">' + opts + '</select></div>';
       }).join("");
     }
 
     document.getElementById("addPromptBtn").addEventListener("click", function() {
-      matchingPrompts.push("");
-      renderMatchingPrompts();
-      renderAnswerKey();
+      matchingPrompts.push(""); renderMatchingPrompts(); renderAnswerKey();
     });
-
     document.getElementById("addOptionBtn").addEventListener("click", function() {
       var key = String.fromCharCode(65 + matchingOptions.length);
-      matchingOptions.push({ key: key, text: "" });
-      renderMatchingOptions();
-      renderAnswerKey();
+      matchingOptions.push({ key: key, text: "" }); renderMatchingOptions(); renderAnswerKey();
     });
 
-    // ========== TRANSLATION TABLE BUILDER ==========
+    // Translation Builder
     function renderTranslationTables() {
       var container = document.getElementById("translationTablesContainer");
       container.innerHTML = translationTables.map(function(table, ti) {
@@ -598,34 +720,24 @@
           return '<div class="builder-row table-row">' +
             '<input type="text" placeholder="a." value="' + escapeHtml(row.label) + '" data-tlabel="' + ti + '-' + ri + '" />' +
             '<input type="text" placeholder="Prompt / phrase" value="' + escapeHtml(row.prompt) + '" data-tprompt="' + ti + '-' + ri + '" />' +
-            '<button class="remove-btn" data-remove-trow="' + ti + '-' + ri + '">✕</button>' +
-          '</div>';
+            '<button class="remove-btn" data-remove-trow="' + ti + '-' + ri + '">&#10005;</button></div>';
         }).join("");
-
         var answersHtml = table.acceptable_answers.map(function(ans, ai) {
           return '<div class="builder-row" style="grid-template-columns:1fr 40px;margin-bottom:4px;">' +
             '<input type="text" placeholder="answer1, answer2, ..." value="' + escapeHtml(ans.join(", ")) + '" data-tans="' + ti + '-' + ai + '" />' +
-            '<button class="remove-btn" data-remove-tans="' + ti + '-' + ai + '">✕</button>' +
-          '</div>';
+            '<button class="remove-btn" data-remove-tans="' + ti + '-' + ai + '">&#10005;</button></div>';
         }).join("");
-
-        return '<div class="table-builder">' +
-          '<h5>Table ' + (ti + 1) + '</h5>' +
-          '<div class="table-meta">' +
-            '<input type="text" placeholder="Table title" value="' + escapeHtml(table.title) + '" data-ttitle="' + ti + '" />' +
-            '<input type="text" placeholder="Prompt / instructions" value="' + escapeHtml(table.prompt) + '" data-tprompt-main="' + ti + '" />' +
-          '</div>' +
-          '<div style="margin-bottom:8px;"><label style="font-size:0.78rem;">Headers (comma-separated)</label>' +
-          '<input type="text" value="' + escapeHtml(table.headers.join(", ")) + '" data-theaders="' + ti + '" style="margin-top:4px;" /></div>' +
+        return '<div class="table-builder"><h5>Table ' + (ti + 1) + '</h5>' +
+          '<div class="table-meta"><input type="text" placeholder="Table title" value="' + escapeHtml(table.title) + '" data-ttitle="' + ti + '" />' +
+          '<input type="text" placeholder="Prompt / instructions" value="' + escapeHtml(table.prompt) + '" data-tprompt-main="' + ti + '" /></div>' +
+          '<div style="margin-bottom:8px;"><label style="font-size:0.78rem;">Headers (comma-separated)</label><input type="text" value="' + escapeHtml(table.headers.join(", ")) + '" data-theaders="' + ti + '" style="margin-top:4px;" /></div>' +
           '<div style="margin-bottom:8px;"><label style="font-size:0.78rem;">Rows</label></div>' + rowsHtml +
           '<button class="btn btn-small" data-add-trow="' + ti + '" style="margin-top:6px;">+ Add Row</button>' +
-          '<div style="margin:12px 0 8px;"><label style="font-size:0.78rem;">Acceptable Answers (one row per answer set, comma-separated alternatives)</label></div>' + answersHtml +
+          '<div style="margin:12px 0 8px;"><label style="font-size:0.78rem;">Acceptable Answers</label></div>' + answersHtml +
           '<button class="btn btn-small" data-add-tans="' + ti + '" style="margin-top:6px;">+ Add Answer Set</button>' +
-          '<button class="btn btn-small btn-danger" data-remove-table="' + ti + '" style="margin-top:12px;">Remove Table</button>' +
-        '</div>';
+          '<button class="btn btn-small btn-danger" data-remove-table="' + ti + '" style="margin-top:12px;">Remove Table</button></div>';
       }).join("");
 
-      // Attach listeners
       container.querySelectorAll("[data-ttitle]").forEach(function(el) {
         el.addEventListener("input", function() { translationTables[Number(el.dataset.ttitle)].title = el.value; });
       });
@@ -694,75 +806,62 @@
 
     document.getElementById("addTranslationTableBtn").addEventListener("click", function() {
       translationTables.push({
-        title: "Task " + (translationTables.length + 1),
-        prompt: "",
+        title: "Task " + (translationTables.length + 1), prompt: "",
         headers: ["Item", "Phrase", "Your translation"],
-        rows: [{ label: "a.", prompt: "" }],
-        acceptable_answers: [[""]]
+        rows: [{ label: "a.", prompt: "" }], acceptable_answers: [[""]]
       });
       renderTranslationTables();
     });
 
-    // ========== TEXT ANSWER BUILDER ==========
+    // Text Answer Builder
     var textAnswerInput = document.getElementById("textAnswerInput");
     var textAnswerTags = document.getElementById("textAnswerTags");
-
     function renderTextTags() {
       var existing = textAnswerTags.querySelectorAll(".tag");
       existing.forEach(function(t) { t.remove(); });
       textAnswers.forEach(function(ans, i) {
         var tag = document.createElement("span");
         tag.className = "tag";
-        tag.innerHTML = escapeHtml(ans) + ' <button data-remove-tag="' + i + '">✕</button>';
+        tag.innerHTML = escapeHtml(ans) + ' <button data-remove-tag="' + i + '">&#10005;</button>';
         textAnswerTags.insertBefore(tag, textAnswerInput);
       });
       textAnswerTags.querySelectorAll("[data-remove-tag]").forEach(function(btn) {
         btn.addEventListener("click", function() {
-          textAnswers.splice(Number(btn.dataset.removeTag), 1);
-          renderTextTags();
+          textAnswers.splice(Number(btn.dataset.removeTag), 1); renderTextTags();
         });
       });
     }
-
     textAnswerInput.addEventListener("keydown", function(e) {
       if (e.key === "Enter" || e.key === ",") {
         e.preventDefault();
         var val = textAnswerInput.value.trim();
-        if (val && !textAnswers.includes(val)) {
-          textAnswers.push(val);
-          textAnswerInput.value = "";
-          renderTextTags();
-        }
+        if (val && !textAnswers.includes(val)) { textAnswers.push(val); textAnswerInput.value = ""; renderTextTags(); }
       }
     });
 
-    // ========== DATASET BUILDER ==========
+    // Dataset Builder
     function renderDatasets() {
       var container = document.getElementById("datasetsContainer");
       container.innerHTML = datasets.map(function(ds, di) {
         var headersHtml = ds.headers.map(function(h, hi) {
           return '<div class="builder-row dataset-header-row">' +
             '<input type="text" placeholder="Header" value="' + escapeHtml(h) + '" data-dh="' + di + '-' + hi + '" />' +
-            '<button class="remove-btn" data-remove-dh="' + di + '-' + hi + '">✕</button>' +
-          '</div>';
+            '<button class="remove-btn" data-remove-dh="' + di + '-' + hi + '">&#10005;</button></div>';
         }).join("");
         var rowsHtml = ds.rows.map(function(row, ri) {
           var cells = row.map(function(cell, ci) {
             return '<input type="text" placeholder="Value" value="' + escapeHtml(cell) + '" data-dcell="' + di + '-' + ri + '-' + ci + '" style="flex:1;" />';
           }).join("");
           return '<div class="builder-row dataset-row" style="display:flex;gap:8px;">' + cells +
-            '<button class="remove-btn" data-remove-drow="' + di + '-' + ri + '">✕</button>' +
-          '</div>';
+            '<button class="remove-btn" data-remove-drow="' + di + '-' + ri + '">&#10005;</button></div>';
         }).join("");
-        return '<div class="table-builder">' +
-          '<h5>Dataset ' + (di + 1) + '</h5>' +
+        return '<div class="table-builder"><h5>Dataset ' + (di + 1) + '</h5>' +
           '<div style="margin-bottom:8px;"><input type="text" placeholder="Dataset label" value="' + escapeHtml(ds.label) + '" data-dlabel="' + di + '" style="width:100%;padding:8px 10px;" /></div>' +
           '<div style="margin-bottom:6px;"><label style="font-size:0.78rem;">Headers</label></div>' + headersHtml +
           '<button class="btn btn-small" data-add-dh="' + di + '" style="margin:6px 0 10px;">+ Add Header</button>' +
           '<div style="margin-bottom:6px;"><label style="font-size:0.78rem;">Rows</label></div>' + rowsHtml +
           '<button class="btn btn-small" data-add-drow="' + di + '" style="margin-top:6px;">+ Add Row</button>' +
-          '<button class="btn btn-small btn-danger" data-remove-ds="' + di + '" style="margin-top:12px;">Remove Dataset</button>' +
-        '</div>';
+          '<button class="btn btn-small btn-danger" data-remove-ds="' + di + '" style="margin-top:12px;">Remove Dataset</button></div>';
       }).join("");
 
       container.querySelectorAll("[data-dlabel]").forEach(function(el) {
@@ -783,8 +882,7 @@
       container.querySelectorAll("[data-remove-dh]").forEach(function(btn) {
         btn.addEventListener("click", function() {
           var parts = btn.dataset.removeDh.split("-");
-          var di = Number(parts[0]);
-          var hi = Number(parts[1]);
+          var di = Number(parts[0]), hi = Number(parts[1]);
           datasets[di].headers.splice(hi, 1);
           datasets[di].rows.forEach(function(row) { row.splice(hi, 1); });
           renderDatasets();
@@ -822,15 +920,11 @@
     }
 
     document.getElementById("addDatasetBtn").addEventListener("click", function() {
-      datasets.push({
-        label: "Reference data",
-        headers: ["Column 1", "Column 2"],
-        rows: [["", ""]]
-      });
+      datasets.push({ label: "Reference data", headers: ["Column 1", "Column 2"], rows: [["", ""]] });
       renderDatasets();
     });
 
-    // ========== AUTH ==========
+    // Auth
     function showAuthError(msg) {
       authFeedback.textContent = msg;
       authFeedback.className = "feedback error";
@@ -845,6 +939,7 @@
         authActions.classList.remove("hidden");
         mainPanel.classList.remove("hidden");
         showAuthSuccess("Signed in as " + user.email);
+        loadDashboard();
       } else {
         authForm.classList.remove("hidden");
         authActions.classList.add("hidden");
@@ -902,13 +997,12 @@
       else updateUI(null);
     });
 
-    // ========== BUILD PAYLOAD ==========
+    // Build payload
     function buildPayload() {
       var mode = pMode.value;
       var payload = {
         slug: document.getElementById("pSlug").value.trim(),
-        mode: mode,
-        type: "adapted",
+        mode: mode, type: "adapted",
         title: document.getElementById("pTitle").value.trim(),
         contest: document.getElementById("pContest").value,
         label: document.getElementById("pLabel").value.trim() || null,
@@ -935,20 +1029,13 @@
         };
       } else if (mode === "translation_table") {
         payload.translation_tables = translationTables.map(function(t) {
-          return {
-            title: t.title,
-            prompt: t.prompt,
-            headers: t.headers,
-            rows: t.rows,
-            acceptable_answers: t.acceptable_answers
-          };
+          return { title: t.title, prompt: t.prompt, headers: t.headers, rows: t.rows, acceptable_answers: t.acceptable_answers };
         });
       } else if (mode === "text") {
         payload.acceptable_answers = textAnswers.length ? [textAnswers] : [];
       } else if (mode === "multi_task") {
         try { payload.tasks = JSON.parse(document.getElementById("pTasksRaw").value); } catch(e) { payload.tasks = []; }
       }
-
       return payload;
     }
 
@@ -957,7 +1044,6 @@
       if (!payload.slug) errors.push("Slug is required");
       if (!payload.title) errors.push("Title is required");
       if (!payload.prompt) errors.push("Prompt is required");
-
       if (payload.mode === "matching") {
         if (!payload.matching.prompts.length) errors.push("Add at least one prompt");
         if (!payload.matching.options.length) errors.push("Add at least one option");
@@ -969,11 +1055,10 @@
       if (payload.mode === "text") {
         if (!payload.acceptable_answers || !payload.acceptable_answers.length || !payload.acceptable_answers[0].length) errors.push("Add at least one acceptable answer");
       }
-
       return errors;
     }
 
-    // ========== ADD / PREVIEW / CLEAR ==========
+    // Add / Preview / Clear
     addBtn.addEventListener("click", function() {
       var payload = buildPayload();
       var errors = validate(payload);
@@ -992,8 +1077,10 @@
           } else {
             addFeedback.textContent = "Success! Added: " + payload.title;
             addFeedback.className = "feedback success";
+            showToast("Problem added: " + payload.title, "success");
             localStorage.removeItem("problems-cache");
             localStorage.removeItem("problems-cache-time");
+            loadDashboard();
           }
         })
         .catch(function(err) {
@@ -1027,25 +1114,28 @@
       addFeedback.className = "feedback";
     });
 
-    // ========== LIST / DELETE ==========
+    // List / Delete / Clone
     function loadList() {
       listContainer.innerHTML = '<div class="feedback">Loading...</div>';
-      supabase.from("problems").select("id, slug, title, contest, topic, year, difficulty, mode").order("created_at", { ascending: false })
+      supabase.from("problems").select("*").order("created_at", { ascending: false })
         .then(function(result) {
           if (result.error) {
             listContainer.innerHTML = '<div class="feedback error">Error: ' + result.error.message + "</div>";
             return;
           }
           if (!result.data.length) {
-            listContainer.innerHTML = '<div class="feedback">No problems found.</div>';
+            listContainer.innerHTML = '<div class="empty-state"><p>No problems found. Add your first one above.</p></div>';
             return;
           }
           listContainer.innerHTML = result.data.map(function(p) {
             return '<div class="problem-item">' +
               '<div><strong>' + escapeHtml(p.title) + '</strong><span>' + escapeHtml(p.contest) + ' &middot; ' + escapeHtml(p.topic) + ' &middot; ' + p.year + ' &middot; Diff ' + p.difficulty + ' &middot; ' + escapeHtml(p.mode) + '</span></div>' +
-              '<button class="btn del-btn" data-slug="' + escapeHtml(p.slug) + '" style="padding:6px 12px;font-size:0.8rem;">Delete</button>' +
-            '</div>';
+              '<div class="problem-actions">' +
+                '<button class="btn btn-small" data-clone="' + escapeHtml(p.slug) + '">Clone</button>' +
+                '<button class="btn btn-small btn-danger del-btn" data-slug="' + escapeHtml(p.slug) + '">Delete</button>' +
+              '</div></div>';
           }).join("");
+
           document.querySelectorAll(".del-btn").forEach(function(btn) {
             btn.addEventListener("click", function() {
               var slug = btn.getAttribute("data-slug");
@@ -1055,6 +1145,27 @@
                   btn.closest(".problem-item").remove();
                   localStorage.removeItem("problems-cache");
                   localStorage.removeItem("problems-cache-time");
+                  showToast("Deleted " + slug, "success");
+                  loadDashboard();
+                });
+            });
+          });
+
+          document.querySelectorAll("[data-clone]").forEach(function(btn) {
+            btn.addEventListener("click", function() {
+              var slug = btn.getAttribute("data-clone");
+              var original = result.data.find(function(p) { return p.slug === slug; });
+              if (!original) return;
+              var clone = Object.assign({}, original);
+              delete clone.id; delete clone.created_at; delete clone.updated_at;
+              clone.slug = original.slug + "-copy-" + Date.now();
+              clone.title = original.title + " (Copy)";
+              supabase.from("problems").insert(clone).select()
+                .then(function(res) {
+                  if (!res.error) {
+                    showToast("Cloned! New slug: " + clone.slug, "success");
+                    loadList(); loadDashboard();
+                  }
                 });
             });
           });
@@ -1071,15 +1182,18 @@
           listContainer.innerHTML = '<div class="feedback success">All problems deleted.</div>';
           localStorage.removeItem("problems-cache");
           localStorage.removeItem("problems-cache-time");
+          showToast("All problems deleted", "success");
+          loadDashboard();
         });
     });
 
-    // ========== CACHE ==========
+    // Cache
     clearCacheBtn.addEventListener("click", function() {
       localStorage.removeItem("problems-cache");
       localStorage.removeItem("problems-cache-time");
       cacheFeedback.textContent = "Problem cache cleared.";
       cacheFeedback.className = "feedback success";
+      showToast("App cache cleared", "success");
     });
 
     clearAllBtn.addEventListener("click", function() {
@@ -1087,10 +1201,11 @@
         localStorage.clear();
         cacheFeedback.textContent = "All localStorage cleared.";
         cacheFeedback.className = "feedback success";
+        showToast("All localStorage cleared", "success");
       }
     });
 
-    // ========== UTILS ==========
+    // Utils
     function escapeHtml(text) {
       if (text == null) return "";
       return String(text)
@@ -1101,14 +1216,10 @@
         .replace(/'/g, "&#039;");
     }
 
-    // Init builders
+    // Init
     updateModeFields();
-    renderMatchingPrompts();
-    renderMatchingOptions();
-    renderAnswerKey();
-    renderTranslationTables();
-    renderTextTags();
-    renderDatasets();
+    renderMatchingPrompts(); renderMatchingOptions(); renderAnswerKey();
+    renderTranslationTables(); renderTextTags(); renderDatasets();
 
     console.log("[ADMIN] Script fully loaded");
   </script>

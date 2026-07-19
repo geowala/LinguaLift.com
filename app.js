@@ -367,9 +367,9 @@ async function initialize() {
   renderLeaderboards();
   updateAuthUI();
 
-  supabaseClient.auth.onAuthStateChange(async () => {
-    await updateAuthUI();
-    await loadUserData();
+  supabaseClient.auth.onAuthStateChange(async (event, session) => {
+    await updateAuthUI(session?.user);
+    if (session?.user) await loadUserData();
   });
 
   console.log('[DEBUG] Initialization complete');
@@ -1392,9 +1392,9 @@ function attachEvents() {
 
   signUpBtn.addEventListener("click", async () => {
     try {
-      await signUp(emailInput.value.trim(), passwordInput.value);
+      const result = await signUp(emailInput.value.trim(), passwordInput.value);
       authStatus.textContent = "Account created. Check your email if confirmation is enabled.";
-      await updateAuthUI();
+      await updateAuthUI(result.user);
       await loadUserData();
     } catch (error) {
       authStatus.textContent = error.message;
@@ -1403,9 +1403,9 @@ function attachEvents() {
 
   signInBtn.addEventListener("click", async () => {
     try {
-      await signIn(emailInput.value.trim(), passwordInput.value);
+      const result = await signIn(emailInput.value.trim(), passwordInput.value);
       authStatus.textContent = "Logged in.";
-      await updateAuthUI();
+      await updateAuthUI(result.user);
       await loadUserData();
     } catch (error) {
       authStatus.textContent = error.message;
@@ -1462,9 +1462,9 @@ async function getCurrentUser() {
   return data.user;
 }
 
-async function updateAuthUI() {
+async function updateAuthUI(user) {
   try {
-    const user = await getCurrentUser();
+    if (!user) user = await getCurrentUser();
     if (user) {
       authFormView.classList.add("hidden");
       authProfileView.classList.remove("hidden");
